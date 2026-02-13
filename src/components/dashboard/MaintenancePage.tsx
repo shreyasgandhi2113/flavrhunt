@@ -1,9 +1,7 @@
-import React from 'react';
+
 import AuthPage from '../auth/AuthPage';
-import { useApp } from '../../context/AppContext';
 
 export default function MaintenancePage() {
-    const { currentUser } = useApp();
 
     return (
         <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f3f4f6' }}>

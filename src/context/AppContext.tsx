@@ -438,7 +438,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updateRecipe = (id: string, updates: Partial<Recipe>) => {
         const updatedRecipes = recipes.map(r => r.id === id ? { ...r, ...updates } : r);
         setRecipes(updatedRecipes);
-        localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
     };
 
     const rateRecipe = (id: string, newRating: number) => {
@@ -446,7 +445,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const updatedRecipes = recipes.map(r => {
             if (r.id === id) {
                 // Update per-user rating
-                const newRatings = { ...r.ratings, [currentUser.id]: newRating };
+                const newRatings: Record<string, number> = { ...r.ratings, [currentUser.id]: newRating };
 
                 // Calculate average rating from all ratings
                 const allRatings = Object.values(newRatings);
@@ -465,7 +464,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             return r;
         });
         setRecipes(updatedRecipes);
-        localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
     };
 
     return (

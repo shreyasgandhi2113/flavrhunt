@@ -12,18 +12,18 @@ type Preference = 'All' | 'Veg' | 'Vegan';
 const FALLBACK_RECIPE: Recipe = {
     id: 'fallback',
     title: 'Welcome to FlavrHunt',
+    image: 'linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%)',
+    rating: 5.0,
+    reviews: 0,
+    time: 0,
     hostId: 'system',
     hostName: 'FlavrHunt',
     info: 'Start sharing your favorite recipes with the community!',
     ingredients: ['Your creativity', 'Fresh ingredients', 'Love for cooking'],
     process: 'Join our community and start sharing amazing recipes.',
     tips: 'Sign up to get started!',
-    tags: ['Healthy'],
-    rating: 5.0,
-    reviews: 0,
-    image: 'linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%)',
-    time: 0,
     type: 'Veg',
+    tags: ['Healthy'],
     likedBy: [],
     ratings: {}
 };

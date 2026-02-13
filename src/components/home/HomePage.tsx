@@ -25,21 +25,23 @@ const FEATURED_RECIPE: Recipe = {
     process: 'Cook rice slowly adding broth...',
     tips: 'Use warm broth for best results.',
     tags: ['Vegetarian', 'Gourmet', 'Dinner'],
-    type: 'Veg'
+    type: 'Veg',
+    likedBy: [],
+    ratings: {}
 };
 
 const RECOMMENDED_RECIPES: Recipe[] = [
-    { id: 'r2', title: 'Avocado Toast Deluxe', image: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)', rating: 4.8, reviews: 156, time: 10, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Vegan', tags: ['Vegan', 'Breakfast'] },
-    { id: 'r3', title: 'Berry Power Smoothie', image: 'linear-gradient(135deg, #fae8ff 0%, #f5d0fe 100%)', rating: 4.7, reviews: 89, time: 5, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Vegan', tags: ['Healthy', 'Quick', 'Sweet'] },
-    { id: 'r4', title: 'Spicy Salmon Bowl', image: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)', rating: 4.9, reviews: 210, time: 25, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Non-Veg', tags: ['Healthy', 'Fish', 'Dinner'] },
-    { id: 'r5', title: 'Pesto Pasta', image: 'linear-gradient(135deg, #ecfccb 0%, #d9f99d 100%)', rating: 4.6, reviews: 120, time: 20, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Veg', tags: ['Vegetarian', 'Pasta', 'Quick'] },
+    { id: 'r2', title: 'Avocado Toast Deluxe', image: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)', rating: 4.8, reviews: 156, time: 10, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Vegan', tags: ['Vegan', 'Breakfast'], likedBy: [], ratings: {} },
+    { id: 'r3', title: 'Berry Power Smoothie', image: 'linear-gradient(135deg, #fae8ff 0%, #f5d0fe 100%)', rating: 4.7, reviews: 89, time: 5, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Vegan', tags: ['Healthy', 'Quick', 'Sweet'], likedBy: [], ratings: {} },
+    { id: 'r4', title: 'Spicy Salmon Bowl', image: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)', rating: 4.9, reviews: 210, time: 25, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Non-Veg', tags: ['Healthy', 'Fish', 'Dinner'], likedBy: [], ratings: {} },
+    { id: 'r5', title: 'Pesto Pasta', image: 'linear-gradient(135deg, #ecfccb 0%, #d9f99d 100%)', rating: 4.6, reviews: 120, time: 20, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Veg', tags: ['Vegetarian', 'Pasta', 'Quick'], likedBy: [], ratings: {} },
 ];
 
 const TRENDING_RECIPES: Recipe[] = [
-    { id: 'r6', title: 'Classic Cheeseburger', image: 'linear-gradient(135deg, #fee2e2 0%, #ffcaca 100%)', rating: 4.8, reviews: 1024, time: 30, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Non-Veg', tags: ['Dinner', 'Comfort Food', 'Non-Veg'] },
-    { id: 'r7', title: 'Caesar Salad', image: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)', rating: 4.5, reviews: 540, time: 15, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Veg', tags: ['Healthy', 'Salad', 'Vegetarian'] },
-    { id: 'r8', title: 'Chocolate Lava Cake', image: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)', rating: 4.9, reviews: 2300, time: 35, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Veg', tags: ['Sweet', 'Dessert', 'Vegetarian'] },
-    { id: 'r9', title: 'Thai Green Curry', image: 'linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%)', rating: 4.7, reviews: 850, time: 40, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Non-Veg', tags: ['Dinner', 'Spicy', 'Non-Veg'] },
+    { id: 'r6', title: 'Classic Cheeseburger', image: 'linear-gradient(135deg, #fee2e2 0%, #ffcaca 100%)', rating: 4.8, reviews: 1024, time: 30, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Non-Veg', tags: ['Dinner', 'Comfort Food', 'Non-Veg'], likedBy: [], ratings: {} },
+    { id: 'r7', title: 'Caesar Salad', image: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)', rating: 4.5, reviews: 540, time: 15, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Veg', tags: ['Healthy', 'Salad', 'Vegetarian'], likedBy: [], ratings: {} },
+    { id: 'r8', title: 'Chocolate Lava Cake', image: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)', rating: 4.9, reviews: 2300, time: 35, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Veg', tags: ['Sweet', 'Dessert', 'Vegetarian'], likedBy: [], ratings: {} },
+    { id: 'r9', title: 'Thai Green Curry', image: 'linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%)', rating: 4.7, reviews: 850, time: 40, hostId: 'u1', hostName: 'Chef', info: '', ingredients: [], process: '', tips: '', type: 'Non-Veg', tags: ['Dinner', 'Spicy', 'Non-Veg'], likedBy: [], ratings: {} },
 ];
 
 const MASTER_RECIPES = [FEATURED_RECIPE, ...RECOMMENDED_RECIPES, ...TRENDING_RECIPES];

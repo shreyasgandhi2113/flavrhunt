@@ -47,7 +47,7 @@ export const PostRecipeModal: React.FC<PostRecipeModalProps> = ({ onClose, initi
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const recipeData = {
+        const recipeData: Omit<Recipe, 'id' | 'hostId' | 'hostName' | 'rating' | 'reviews'> = {
             title: formData.title,
             info: formData.info,
             ingredients: formData.ingredients.split('\n').filter(i => i.trim()),
@@ -55,11 +55,11 @@ export const PostRecipeModal: React.FC<PostRecipeModalProps> = ({ onClose, initi
             tips: formData.tips,
             tags: selectedTags,
             time: parseInt(formData.time),
-            type: formData.type as 'Veg' | 'Vegan' | 'Non-Veg',
+            type: formData.type,
             image: formData.image || '🥘',
             likedBy: [],
             ratings: {}
-        } as any;
+        };
 
         if (initialData) {
             updateRecipe(initialData.id, recipeData);

@@ -38,18 +38,18 @@ export type DashboardView = 'feed' | 'liked' | 'watchLater' | 'myRecipes';
 export interface Recipe {
     id: string;
     title: string;
+    image: string;
+    rating: number;
+    reviews: number;
+    time: number;
     hostId: string;
     hostName: string;
     info: string;
     ingredients: string[];
     process: string;
     tips: string;
-    tags: Category[];
-    rating: number; // average rating calculated from ratings object
-    reviews: number; // total count of ratings
-    image: string; // Emoji or URL
-    time: number; // minutes
-    type: 'Veg' | 'Vegan' | 'Non-Veg';
-    likedBy: string[]; // user IDs who have liked this recipe
-    ratings: { [userId: string]: number }; // per-user ratings: userId -> rating value (1-5)
+    type: string;
+    tags: string[];
+    likedBy: string[];
+    ratings: Record<string, number>;
 }
