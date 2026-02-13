@@ -1,0 +1,78 @@
+.project-info-card {
+    padding: 24px 0;
+    margin-top: 32px;
+    border-top: 1px solid #f3f4f6;
+    background: transparent;
+    width: 100%;
+}
+
+.project-info-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #9ca3af;
+    margin-bottom: 12px;
+}
+
+.project-info-names {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.developer-name {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.project-info-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.contact-email {
+    font-size: 13px;
+    color: #14b8a6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.contact-email:hover {
+    color: #0f766e;
+    text-decoration: underline;
+}
+
+/* Sidebar Specific */
+.sidebar .project-info-card {
+    padding: 16px 12px;
+    margin-top: auto;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar .project-info-label {
+    font-size: 10px;
+    margin-bottom: 8px;
+}
+
+.sidebar .developer-name {
+    font-size: 13px;
+}
+
+/* Auth Page Specific */
+.auth-form-container .project-info-card {
+    border-top-color: #e5e7eb;
+}
+
+@media (max-width: 768px) {
+    .project-info-card {
+        padding: 20px 0;
+        margin-top: 24px;
+    }
+}
