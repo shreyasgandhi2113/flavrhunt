@@ -8,9 +8,11 @@ import { RecipeDetailModal } from './RecipeDetailModal';
 
 interface MainFeedProps {
     view: DashboardView;
+    isDarkMode?: boolean;
+    toggleTheme?: () => void;
 }
 
-export const MainFeed: React.FC<MainFeedProps> = ({ view }) => {
+export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleTheme }) => {
     const { recipes, currentUser, getRecipeById } = useApp();
 
     // Local State
@@ -69,8 +71,29 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view }) => {
 
     const selectedRecipe = selectedRecipeId ? getRecipeById(selectedRecipeId) : null;
 
+    // Feature 1: Smart Welcome Header logic
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return 'Good Morning';
+        if (hour >= 12 && hour < 17) return 'Good Afternoon';
+        if (hour >= 17 && hour < 21) return 'Good Evening';
+        return 'Good Night';
+    };
+
     return (
-        <div className="main-feed">
+        <div className={`main-feed ${isDarkMode ? 'theme-dark' : ''}`}>
+            {/* Feature 1: Welcome Header */}
+            {view === 'feed' && currentUser && (
+                <div className="smart-welcome-header fade-up-animation">
+                    <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: '0 0 4px 0', color: 'inherit' }}>
+                        {getGreeting()}, {currentUser.username}
+                    </h2>
+                    <p style={{ margin: 0, color: isDarkMode ? '#9ca3af' : '#6b7280', fontSize: '15px' }}>
+                        Ready to cook something delicious today?
+                    </p>
+                </div>
+            )}
+
             <div className="feed-header">
                 <div>
                     <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
@@ -83,12 +106,19 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view }) => {
                     </p>
                 </div>
 
-                <button className="post-btn" onClick={() => {
-                    setRecipeToEdit(undefined);
-                    setIsPostModalOpen(true);
-                }}>
-                    <span>+</span> Post Recipe
-                </button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    {toggleTheme && (
+                        <button className="theme-toggle-btn" onClick={toggleTheme} title="Toggle Dark Mode">
+                            {isDarkMode ? '☀️' : '🌙'}
+                        </button>
+                    )}
+                    <button className="post-btn" onClick={() => {
+                        setRecipeToEdit(undefined);
+                        setIsPostModalOpen(true);
+                    }}>
+                        <span>+</span> Post Recipe
+                    </button>
+                </div>
             </div>
 
             <SearchBar onSearch={handleSearch} />

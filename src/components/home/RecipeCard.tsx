@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import type { Recipe } from '../../types';
 
@@ -11,20 +11,25 @@ interface RecipeCardProps {
 }
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'standard', onClick, onEdit }) => {
-    const { currentUser } = useApp();
+    const { currentUser, toggleLike } = useApp();
+    const [isHovered, setIsHovered] = useState(false);
+    const [showHeart, setShowHeart] = useState(false);
     const isHero = variant === 'hero';
     const isCompact = variant === 'compact';
     const isOwner = currentUser?.id === recipe.hostId;
 
     // Container
     const containerStyle: React.CSSProperties = {
-        background: 'white',
+        background: 'var(--card-bg, white)',
         borderRadius: '24px',
         overflow: 'hidden',
         position: 'relative',
-        transition: 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
+        transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
         cursor: 'pointer',
-        boxShadow: isHero ? '0 20px 40px rgba(0,0,0,0.08)' : '0 4px 20px rgba(0,0,0,0.05)',
+        boxShadow: isHovered
+            ? '0 20px 40px rgba(0,0,0,0.12)'
+            : isHero ? '0 20px 40px rgba(0,0,0,0.08)' : '0 4px 20px rgba(0,0,0,0.05)',
+        transform: isHovered ? (isHero ? 'scale(1.01) translateY(-4px)' : 'scale(1.03) translateY(-6px)') : 'translateY(0)',
         display: 'flex',
         flexDirection: isCompact ? 'row' : 'column',
         height: isHero ? '100%' : isCompact ? '100px' : '360px',
@@ -36,14 +41,17 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
     const imageStyle: React.CSSProperties = {
         height: isHero ? '60%' : isCompact ? '100%' : '200px',
         width: isCompact ? '100px' : '100%',
-        background: isUrl ? `url(${recipe.image})` : recipe.image,
-        backgroundSize: isUrl ? 'cover' : undefined,
+        background: isUrl
+            ? `${isHovered ? 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.4)), ' : ''}url(${recipe.image})`
+            : recipe.image,
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         fontSize: isHero ? '80px' : '48px',
         position: 'relative',
+        transition: 'all 0.3s ease'
     };
 
     // Badges
@@ -79,10 +87,11 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
 
     const titleStyle: React.CSSProperties = {
         fontSize: isHero ? '28px' : isCompact ? '16px' : '18px',
-        fontWeight: 700,
-        color: '#111827',
+        fontWeight: isHovered ? 800 : 700,
+        color: 'var(--text-primary, #111827)',
         margin: '0 0 4px 0',
         lineHeight: 1.2,
+        transition: 'font-weight 0.2s',
     };
 
     const metaStyle: React.CSSProperties = {
@@ -100,23 +109,44 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
             className="recipe-card"
             style={containerStyle}
             onClick={() => onClick?.(recipe.id)}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.transform = isHero ? 'scale(1.01) translateY(-4px)' : 'translateY(-6px)';
-                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.12)';
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = isHero ? '0 20px 40px rgba(0,0,0,0.08)' : '0 4px 20px rgba(0,0,0,0.05)';
-            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             {/* Image Section */}
-            <div style={imageStyle}>
-                <div style={{ transition: 'transform 0.5s ease' }}>
+            <div
+                style={imageStyle}
+                onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    if (currentUser && !currentUser.likedRecipes.includes(recipe.id)) {
+                        toggleLike(recipe.id);
+                        setShowHeart(true);
+                        setTimeout(() => setShowHeart(false), 500);
+                    }
+                }}
+            >
+                <div style={{ transition: 'transform 0.5s ease', opacity: isUrl && isHovered ? 0 : 1 }}>
                     {!isUrl && (recipe.tags.includes('Vegan') ? '🥗' :
                         recipe.tags.includes('Sweet') ? '🍓' :
                             recipe.tags.includes('Pasta') ? '🍝' :
                                 recipe.tags.includes('Fish') ? '🐟' : '🥘')}
                 </div>
+
+                {/* Heart Burst Animation Overlay */}
+                {showHeart && (
+                    <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        fontSize: '64px',
+                        color: '#ef4444',
+                        animation: 'heartBurst 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both',
+                        zIndex: 10,
+                        pointerEvents: 'none'
+                    }}>
+                        ❤️
+                    </div>
+                )}
 
 
                 {!isCompact && (
