@@ -508,6 +508,94 @@
     }
 }
 
+/* Real-time Validation */
+.form-input.is-invalid {
+    border-color: #ef4444;
+}
+
+.form-input.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input.is-valid {
+    border-color: #10b981;
+}
+
+.form-input.is-valid:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.error-text {
+    font-size: 12px;
+    color: #ef4444;
+    margin-top: -2px;
+    margin-bottom: 2px;
+}
+
+/* Password Toggle */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper .form-input {
+    width: 100%;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 12px;
+    color: var(--gray-500);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast);
+}
+
+.password-toggle-icon:hover {
+    color: var(--gray-700);
+}
+
+/* Auth Animations */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-10px);
+    }
+
+    40% {
+        transform: translateX(10px);
+    }
+
+    60% {
+        transform: translateX(-10px);
+    }
+
+    80% {
+        transform: translateX(10px);
+    }
+}
+
+.shake-animation {
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+.submit-btn.error-animation {
+    background: #ef4444;
+}
+
+.submit-btn.success-animation {
+    background: #10b981;
+    transform: scale(0.98);
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
     .auth-brand-panel {

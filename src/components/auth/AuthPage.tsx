@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import './AuthPage.css';
 import logo from '../../assets/flavrhunt-logo.png';
 import { useApp } from '../../context/AppContext';
@@ -29,15 +29,60 @@ const FALLBACK_RECIPE: Recipe = {
 };
 
 export default function AuthPage() {
-    const { login, signup, adminLogin, recipes, maintenanceStatus } = useApp();
+    const { login, signup, adminLogin, recipes, maintenanceStatus, users } = useApp();
 
     // Latest recipe is first (we prepend on post)
     const latestRecipe = useMemo(() => recipes[0] ?? FALLBACK_RECIPE, [recipes]);
 
     const [mode, setMode] = useState<AuthMode>('signin');
+    const [showPassword, setShowPassword] = useState(false);
 
-    // Force Admin mode if maintenance is on and user tries to do something? 
-    // Or just show message.
+    // Login Limiter State
+    const [loginAttempts, setLoginAttempts] = useState(0);
+    const [countdown, setCountdown] = useState(0);
+
+    // Animation State
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isShaking, setIsShaking] = useState(false);
+
+    // Form Validation State
+    const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+
+    useEffect(() => {
+        const storedAttempts = sessionStorage.getItem('flavrLoginAttempts');
+        if (storedAttempts) {
+            setLoginAttempts(parseInt(storedAttempts, 10));
+        }
+
+        const storedLockTime = sessionStorage.getItem('flavrLoginLockTime');
+        if (storedLockTime) {
+            const lockUntil = parseInt(storedLockTime, 10);
+            if (lockUntil > Date.now()) {
+                setCountdown(Math.ceil((lockUntil - Date.now()) / 1000));
+            } else {
+                sessionStorage.removeItem('flavrLoginAttempts');
+                sessionStorage.removeItem('flavrLoginLockTime');
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        let timer: ReturnType<typeof setInterval>;
+        if (countdown > 0) {
+            timer = setInterval(() => {
+                setCountdown(prev => {
+                    if (prev <= 1) {
+                        setLoginAttempts(0);
+                        sessionStorage.removeItem('flavrLoginAttempts');
+                        sessionStorage.removeItem('flavrLoginLockTime');
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [countdown]);
 
     // ... rest of state ...
     const [formData, setFormData] = useState({
@@ -52,9 +97,36 @@ export default function AuthPage() {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
+    const usernameError = (!formData.username) ? ''
+        : (formData.username.length < 3) ? 'Minimum 3 characters'
+            : (/\s/.test(formData.username)) ? 'No spaces allowed'
+                : (mode === 'signup' && users.some(u => u.username.toLowerCase() === formData.username.toLowerCase())) ? 'Username already taken'
+                    : '';
+
+    const passwordError = (!formData.password) ? ''
+        : (formData.password.length < 6) ? 'Minimum 6 characters'
+            : '';
+
+    const emailError = mode === 'signup' && formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+        ? 'Invalid email format' : '';
+
+    const isFormValid = mode === 'signin'
+        ? (!usernameError && !passwordError && formData.username && formData.password)
+        : mode === 'admin'
+            ? (formData.username && formData.password)
+            : (!usernameError && !passwordError && !emailError && formData.username && formData.password && formData.email && formData.fullName && formData.age);
+
+    const isLoginBlocked = mode === 'signin' && countdown > 0;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        // also touch the field when typing dynamically
+        setTouchedFields(prev => ({ ...prev, [name]: true }));
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        setTouchedFields(prev => ({ ...prev, [e.target.name]: true }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -68,21 +140,62 @@ export default function AuthPage() {
         }
 
         if (mode === 'signin') {
-            const success = login(formData.username, formData.password);
-            if (!success) setError('Invalid username or credentials.');
+            if (isLoginBlocked) return; // double check
+
+            const user = users.find(u => u.username === formData.username);
+
+            if (!user) {
+                setError('Invalid username or password.');
+                setIsShaking(true);
+                setTimeout(() => setIsShaking(false), 600);
+
+                const newAttempts = loginAttempts + 1;
+                setLoginAttempts(newAttempts);
+                sessionStorage.setItem('flavrLoginAttempts', newAttempts.toString());
+
+                if (newAttempts >= 5) {
+                    const lockUntil = Date.now() + 30000;
+                    sessionStorage.setItem('flavrLoginLockTime', lockUntil.toString());
+                    setCountdown(30);
+                    setError('Too many failed attempts. Please wait 30 seconds.');
+                }
+            } else if (user.status === 'disabled') {
+                login(formData.username, formData.password);
+                setError('Your account is disabled.');
+            } else {
+                setIsSuccess(true);
+                setLoginAttempts(0);
+                sessionStorage.removeItem('flavrLoginAttempts');
+                sessionStorage.removeItem('flavrLoginLockTime');
+
+                setTimeout(() => {
+                    login(formData.username, formData.password);
+                }, 800);
+            }
             return;
         }
 
 
         if (mode === 'admin') {
             const success = adminLogin(formData.username, formData.password);
-            if (!success) setError('Invalid admin credentials.');
+            if (!success) {
+                setError('Invalid admin credentials.');
+                setIsShaking(true);
+                setTimeout(() => setIsShaking(false), 600);
+            }
             return;
         }
 
         // Sign Up
-        if (!formData.username || !formData.password || !formData.email || !formData.fullName || !formData.age) {
-            setError('Please fill in all fields');
+        if (!isFormValid) {
+            setTouchedFields({
+                username: true,
+                password: true,
+                email: true,
+                fullName: true,
+                age: true
+            });
+            setError('Please fill in all fields correctly');
             return;
         }
 
@@ -97,6 +210,7 @@ export default function AuthPage() {
             setMessage('Account Created! Please login.');
             setMode('signin');
             setFormData(prev => ({ ...prev, password: '' }));
+            setTouchedFields({});
         } catch (e: any) {
             setError(e.message || 'Signup failed');
         }
@@ -144,7 +258,7 @@ export default function AuthPage() {
             </div>
 
             {/* Right Panel - Form */}
-            <div className="auth-form-panel">
+            <div className={`auth-form-panel ${isShaking ? 'shake-animation' : ''}`}>
                 <div className="auth-form-container fade-in">
                     {maintenanceStatus === 'active' && (
                         <div style={{ background: '#fef3c7', color: '#92400e', padding: '12px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center', border: '1px solid #f59e0b' }}>
@@ -161,13 +275,13 @@ export default function AuthPage() {
                         <div className="auth-tabs">
                             <button
                                 className={`auth-tab ${mode === 'signin' ? 'active' : ''}`}
-                                onClick={() => { setMode('signin'); setMessage(''); setError(''); }}
+                                onClick={() => { setMode('signin'); setMessage(''); setError(''); setTouchedFields({}); }}
                             >
                                 Sign in
                             </button>
                             <button
                                 className={`auth-tab ${mode === 'signup' ? 'active' : ''}`}
-                                onClick={() => { setMode('signup'); setMessage(''); setError(''); }}
+                                onClick={() => { setMode('signup'); setMessage(''); setError(''); setTouchedFields({}); }}
                             >
                                 Sign up
                             </button>
@@ -187,9 +301,11 @@ export default function AuthPage() {
                                 placeholder="Enter username"
                                 value={formData.username}
                                 onChange={handleChange}
-                                className="form-input"
+                                onBlur={handleBlur}
+                                className={`form-input ${touchedFields.username ? (usernameError ? 'is-invalid' : 'is-valid') : ''}`}
                                 required
                             />
+                            {touchedFields.username && usernameError && <span className="error-text">{usernameError}</span>}
                         </div>
 
                         {mode === 'signup' && (
@@ -214,9 +330,11 @@ export default function AuthPage() {
                                         placeholder="hello@example.com"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="form-input"
+                                        onBlur={handleBlur}
+                                        className={`form-input ${touchedFields.email ? (emailError ? 'is-invalid' : 'is-valid') : ''}`}
                                         required
                                     />
+                                    {touchedFields.email && emailError && <span className="error-text">{emailError}</span>}
                                 </div>
                                 <div className="form-group-row" style={{ display: 'flex', gap: '16px' }}>
                                     <div className="form-group" style={{ flex: 1 }}>
@@ -249,21 +367,66 @@ export default function AuthPage() {
                             </>
                         )}
 
-                        <div className="form-group">
+                        <div className="form-group" style={{ position: 'relative' }}>
                             <label className="form-label">Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="form-input"
-                                required
-                            />
+                            <div className="password-input-wrapper">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    name="password"
+                                    placeholder="••••••••"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={`form-input ${touchedFields.password ? (passwordError ? 'is-invalid' : 'is-valid') : ''}`}
+                                    required
+                                    style={{ paddingRight: '40px' }}
+                                />
+                                <span
+                                    className="password-toggle-icon"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                                            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                                            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                                            <line x1="2" x2="22" y1="2" y2="22" />
+                                        </svg>
+                                    )}
+                                </span>
+                            </div>
+                            {touchedFields.password && passwordError && <span className="error-text">{passwordError}</span>}
                         </div>
 
-                        <button type="submit" className="submit-btn" style={{ background: mode === 'admin' ? '#ef4444' : undefined }}>
-                            {mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Admin Login'}
+                        <button
+                            type="submit"
+                            className={`submit-btn ${isSuccess ? 'success-animation' : ''} ${error && isShaking ? 'error-animation' : ''}`}
+                            disabled={isLoginBlocked || !isFormValid}
+                            style={{
+                                background: mode === 'admin' ? '#ef4444' : undefined,
+                                opacity: (isLoginBlocked || !isFormValid) ? 0.6 : 1,
+                                cursor: (isLoginBlocked || !isFormValid) ? 'not-allowed' : 'pointer'
+                            }}
+                        >
+                            {isSuccess ? (
+                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    Success
+                                </span>
+                            ) : mode === 'signin' ? (
+                                isLoginBlocked ? `Please wait ${countdown}s` : 'Sign in'
+                            ) : mode === 'signup' ? (
+                                'Create account'
+                            ) : (
+                                'Admin Login'
+                            )}
                         </button>
 
                         <div style={{ marginTop: '16px', textAlign: 'center' }}>
