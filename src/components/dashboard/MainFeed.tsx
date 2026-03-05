@@ -21,6 +21,7 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
     const [isPostModalOpen, setIsPostModalOpen] = useState(false);
     const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
     const [recipeToEdit, setRecipeToEdit] = useState<Recipe | undefined>(undefined);
+    const [sortOption, setSortOption] = useState<string>('Highest Rated');
 
     // Filter Logic
     const filteredRecipes = useMemo(() => {
@@ -58,11 +59,38 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
             result = result.filter(r => r.tags.includes(activeTag as any));
         }
 
-        // Sort by rating (as requested "one with most star will come first")
-        result.sort((a, b) => b.rating - a.rating);
+        // Sort by option
+        switch (sortOption) {
+            case 'Highest Rated':
+                result.sort((a, b) => b.rating - a.rating);
+                break;
+            case 'Most Liked':
+                result.sort((a, b) => (b.likedBy?.length || 0) - (a.likedBy?.length || 0));
+                break;
+            case 'Quickest to Cook':
+                result.sort((a, b) => a.time - b.time);
+                break;
+            case 'Newest':
+                // Recipes without numeric id will have NaN, fallback to 0
+                result.sort((a, b) => {
+                    const idA = isNaN(parseInt(a.id)) ? 0 : parseInt(a.id);
+                    const idB = isNaN(parseInt(b.id)) ? 0 : parseInt(b.id);
+                    return idB - idA;
+                });
+                break;
+            case 'Oldest':
+                result.sort((a, b) => {
+                    const idA = isNaN(parseInt(a.id)) ? 0 : parseInt(a.id);
+                    const idB = isNaN(parseInt(b.id)) ? 0 : parseInt(b.id);
+                    return idA - idB;
+                });
+                break;
+            default:
+                break;
+        }
 
         return result;
-    }, [recipes, currentUser, view, searchQuery, activeTag]);
+    }, [recipes, currentUser, view, searchQuery, activeTag, sortOption]);
 
     const handleSearch = (q: string, tag: Category | 'All') => {
         setSearchQuery(q);
@@ -122,6 +150,28 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
             </div>
 
             <SearchBar onSearch={handleSearch} />
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+                <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    style={{
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: isDarkMode ? '1px solid #374151' : '1px solid #d1d5db',
+                        background: isDarkMode ? '#1f2937' : '#ffffff',
+                        color: isDarkMode ? '#f9fafb' : '#111827',
+                        outline: 'none',
+                        cursor: 'pointer'
+                    }}
+                >
+                    <option value="Highest Rated">Highest Rated</option>
+                    <option value="Most Liked">Most Liked</option>
+                    <option value="Quickest to Cook">Quickest to Cook</option>
+                    <option value="Newest">Newest</option>
+                    <option value="Oldest">Oldest</option>
+                </select>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
                 {filteredRecipes.map(recipe => (
