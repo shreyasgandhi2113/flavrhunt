@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { User, Recipe } from '../types';
+import { addAdminLog } from '../utils/adminUtils';
 
 interface AppContextType {
     currentUser: User | null;
@@ -22,7 +23,9 @@ interface AppContextType {
     setMaintenanceStartTime: (time: number | null) => void;
     toggleUserStatus: (userId: string) => void;
     deleteUser: (userId: string, deleteRecipes: boolean) => void;
+    permanentDeleteUser: (userId: string, deleteRecipes: boolean) => void;
     deleteRecipe: (recipeId: string) => void;
+    permanentDeleteRecipe: (recipeId: string) => void;
 }
 // ... (skip down to Provider return)
 
@@ -173,6 +176,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     });
 
+    const updateMaintenanceStatus = (status: 'off' | 'pending' | 'active') => {
+        setMaintenanceStatus(status);
+        if (currentUser?.role === 'admin') {
+            addAdminLog(currentUser.username, status === 'off' ? 'Stopped Maintenance Mode' : 'Started Maintenance Mode', 'system', 'System');
+        }
+    };
+
     const [maintenanceStartTime, setMaintenanceStartTime] = useState<number | null>(() => {
         try {
             const saved = localStorage.getItem('flavrMaintenanceStartTime');
@@ -235,6 +245,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 alert("Your account is disabled. Please contact the owner of this project.");
                 return false;
             }
+            if (user.status === 'deleted') {
+                alert("Your account has been deleted.");
+                return false;
+            }
             setCurrentUser(user);
             return true;
         }
@@ -242,41 +256,92 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     const toggleUserStatus = (userId: string) => {
+        const userToUpdate = users.find(u => u.id === userId);
+        if (!userToUpdate) return;
+        const newStatus = userToUpdate.status === 'active' ? 'disabled' : 'active';
+
         const updatedUsers = users.map(u =>
             u.id === userId
-                ? { ...u, status: (u.status === 'active' ? 'disabled' : 'active') as 'active' | 'disabled' }
+                ? { ...u, status: newStatus as 'active' | 'disabled' | 'deleted' }
                 : u
         );
         setUsers(updatedUsers);
+
+        if (currentUser?.role === 'admin') {
+            addAdminLog(currentUser.username, newStatus === 'active' ? 'Enabled User' : 'Disabled User', 'user', userToUpdate.username);
+        }
     };
 
     const deleteUser = (userId: string, shouldDeleteRecipes: boolean) => {
+        const userToDelete = users.find(u => u.id === userId);
+        if (!userToDelete) return;
+
+        // Soft delete user
+        const updatedUsers = users.map(u => u.id === userId ? { ...u, status: 'deleted' as const } : u);
+        setUsers(updatedUsers);
+
+        if (currentUser?.role === 'admin') {
+            addAdminLog(currentUser.username, 'Deleted User', 'user', userToDelete.username);
+        }
+
+        if (shouldDeleteRecipes) {
+            const updatedRecipes = recipes.map(r => r.hostId === userId ? { ...r, status: 'deleted' as const } : r);
+            setRecipes(updatedRecipes);
+        }
+    };
+
+    const permanentDeleteUser = (userId: string, shouldDeleteRecipes: boolean) => {
+        const userToDelete = users.find(u => u.id === userId);
+        if (!userToDelete) return;
+
         const updatedUsers = users.filter(u => u.id !== userId);
         setUsers(updatedUsers);
+
+        if (currentUser?.role === 'admin') {
+            addAdminLog(currentUser.username, 'Permanently Deleted User', 'user', userToDelete.username);
+        }
 
         if (shouldDeleteRecipes) {
             const updatedRecipes = recipes.filter(r => r.hostId !== userId);
             setRecipes(updatedRecipes);
 
-            // Also remove from other users' liked/saved lists
             const cleanedUsers = updatedUsers.map(u => ({
                 ...u,
-                likedRecipes: u.likedRecipes.filter(id => !recipes.find(r => r.id === id && r.hostId === userId)),
-                watchLaterRecipes: u.watchLaterRecipes.filter(id => !recipes.find(r => r.id === id && r.hostId === userId))
+                likedRecipes: u.likedRecipes.filter(id => !updatedRecipes.find(r => r.id === id && r.hostId === userId)),
+                watchLaterRecipes: u.watchLaterRecipes.filter(id => !updatedRecipes.find(r => r.id === id && r.hostId === userId))
             }));
             setUsers(cleanedUsers);
         }
     };
 
     const deleteRecipe = (recipeId: string) => {
+        const recipeToDelete = recipes.find(r => r.id === recipeId);
+        if (!recipeToDelete) return;
+
+        // Soft delete recipe
+        setRecipes(recipes.map(r => r.id === recipeId ? { ...r, status: 'deleted' as const } : r));
+
+        if (currentUser?.role === 'admin') {
+            addAdminLog(currentUser.username, 'Deleted Recipe', 'recipe', recipeToDelete.title);
+        }
+    };
+
+    const permanentDeleteRecipe = (recipeId: string) => {
+        const recipeToDelete = recipes.find(r => r.id === recipeId);
+        if (!recipeToDelete) return;
+
         setRecipes(recipes.filter(r => r.id !== recipeId));
-        // Remove from users' lists
+
         setUsers(users.map(u => ({
             ...u,
             likedRecipes: u.likedRecipes.filter(id => id !== recipeId),
             watchLaterRecipes: u.watchLaterRecipes.filter(id => id !== recipeId),
             myRecipes: u.myRecipes.filter(id => id !== recipeId)
         })));
+
+        if (currentUser?.role === 'admin') {
+            addAdminLog(currentUser.username, 'Permanently Deleted Recipe', 'recipe', recipeToDelete.title);
+        }
     };
 
     const adminLogin = (username: string, pass: string) => {
@@ -483,12 +548,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             updateRecipe,
             rateRecipe,
             maintenanceStatus,
-            setMaintenanceStatus,
+            setMaintenanceStatus: updateMaintenanceStatus,
             maintenanceStartTime,
             setMaintenanceStartTime,
             toggleUserStatus,
             deleteUser,
-            deleteRecipe
+            permanentDeleteUser,
+            deleteRecipe,
+            permanentDeleteRecipe
         }}>
             {children}
         </AppContext.Provider>

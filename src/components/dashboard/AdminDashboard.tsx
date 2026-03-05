@@ -3,9 +3,12 @@ import { useApp } from '../../context/AppContext';
 import { AdminUsersView } from './AdminUsersView';
 import { AdminRecipesView } from './AdminRecipesView';
 import { AdminMaintenanceView } from './AdminMaintenanceView';
+import { AdminActivityView } from './AdminActivityView';
+import { AdminTrashView } from './AdminTrashView';
+import { AdminCommentsView } from './AdminCommentsView';
+import { AdminReportsView } from './AdminReportsView';
 
-
-type AdminViewProp = 'users' | 'recipes' | 'maintenance';
+type AdminViewProp = 'users' | 'recipes' | 'comments' | 'reports' | 'activity' | 'trash' | 'maintenance';
 
 import logo from '../../assets/flavrhunt-logo.png';
 
@@ -25,6 +28,12 @@ export const AdminDashboard: React.FC = () => {
         setCurrentView('users');
     };
 
+    const handleNavigateToComment = (_commentId: string) => {
+        setCurrentView('comments');
+        // Need to add some state to navigate directly to comment?
+        // Let's just switch to comments view for now.
+    };
+
     return (
         <div style={{ display: 'flex', height: '100vh', flexDirection: 'column', background: '#f9fafb' }}>
             {/* Top Navigation */}
@@ -34,33 +43,36 @@ export const AdminDashboard: React.FC = () => {
                     <span style={{ fontWeight: 'bold', fontSize: '18px' }}>FlavrHunt Admin</span>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    {(['users', 'recipes', 'maintenance'] as const).map(view => (
-                        <button
-                            key={view}
-                            onClick={() => setCurrentView(view)}
-                            style={{
-                                padding: '8px 16px',
-                                background: currentView === view ? '#374151' : 'transparent',
-                                border: 'none',
-                                borderRadius: '4px',
-                                color: 'white',
-                                cursor: 'pointer',
-                                textTransform: 'capitalize',
-                                fontWeight: currentView === view ? 'bold' : 'normal'
-                            }}
-                        >
-                            {view}
-                        </button>
-                    ))}
-                </div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingRight: '12px' }}>
+                        {(['activity', 'users', 'recipes', 'comments', 'reports', 'trash', 'maintenance'] as const).map(view => (
+                            <button
+                                key={view}
+                                onClick={() => setCurrentView(view)}
+                                style={{
+                                    padding: '8px 16px',
+                                    background: currentView === view ? '#374151' : 'transparent',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    textTransform: 'capitalize',
+                                    fontWeight: currentView === view ? 'bold' : 'normal',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {view}
+                            </button>
+                        ))}
+                    </div>
 
-                <button
-                    onClick={logout}
-                    style={{ padding: '8px 16px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px' }}
-                >
-                    Logout
-                </button>
+                    <button
+                        onClick={logout}
+                        style={{ padding: '8px 16px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px' }}
+                    >
+                        Logout
+                    </button>
+                </div>
             </div>
 
             {/* Main Content */}
@@ -79,6 +91,14 @@ export const AdminDashboard: React.FC = () => {
                         onNavigateToUser={handleNavigateToUser}
                     />
                 )}
+                {currentView === 'comments' && (
+                    <AdminCommentsView onNavigateToRecipe={handleNavigateToRecipe} onNavigateToUser={handleNavigateToUser} />
+                )}
+                {currentView === 'reports' && (
+                    <AdminReportsView onNavigateToRecipe={handleNavigateToRecipe} onNavigateToUser={handleNavigateToUser} onNavigateToComment={handleNavigateToComment} />
+                )}
+                {currentView === 'activity' && <AdminActivityView />}
+                {currentView === 'trash' && <AdminTrashView />}
                 {currentView === 'maintenance' && <AdminMaintenanceView />}
             </div>
         </div>

@@ -11,7 +11,7 @@ export interface User {
     myRecipes: string[];
     password?: string; // Optional because we don't store it for all users/admins in all views
     role?: 'user' | 'admin';
-    status: 'active' | 'disabled';
+    status: 'active' | 'disabled' | 'deleted';
     joinedAt: string; // ISO Date string
     recipesPosted: string[]; // Duplicate of myRecipes but specifically requested
 }
@@ -52,4 +52,5 @@ export interface Recipe {
     tags: string[];
     likedBy: string[];
     ratings: Record<string, number>;
+    status?: 'active' | 'deleted';
 }
