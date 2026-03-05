@@ -15,7 +15,8 @@ export const AdminRecipesView: React.FC<AdminRecipesViewProps> = ({
     onClearSelectedRecipe,
     onNavigateToUser
 }) => {
-    const { recipes, deleteRecipe } = useApp();
+    const { recipes, deleteRecipe, currentUser } = useApp();
+    const canDelete = currentUser?.isSuperAdmin || currentUser?.permissions?.deleteRecipes;
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
@@ -105,12 +106,14 @@ export const AdminRecipesView: React.FC<AdminRecipesViewProps> = ({
                                 </td>
                                 <td style={{ padding: '10px' }}>★ {recipe.rating.toFixed(1)}</td>
                                 <td style={{ padding: '10px' }}>
-                                    <button
-                                        onClick={() => handleDelete(recipe.id, recipe.title)}
-                                        style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#ef4444' }}
-                                    >
-                                        Delete
-                                    </button>
+                                    {canDelete && (
+                                        <button
+                                            onClick={() => handleDelete(recipe.id, recipe.title)}
+                                            style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#ef4444' }}
+                                        >
+                                            Delete
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}

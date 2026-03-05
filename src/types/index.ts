@@ -1,3 +1,26 @@
+export interface SubAdminPermissions {
+    viewUsers: boolean;
+    deleteUsers: boolean;
+    viewRecipes: boolean;
+    deleteRecipes: boolean;
+    viewComments: boolean;
+    deleteComments: boolean;
+    moderateReports: boolean;
+    maintenanceControl: boolean;
+    viewLogs: boolean;
+    trashControl: boolean;
+}
+
+export interface SubAdmin {
+    subAdminId: string;
+    username: string;
+    password?: string;
+    permissions: SubAdminPermissions;
+    createdBy: string;
+    createdAt: number;
+    status: 'active' | 'disabled';
+}
+
 export interface User {
     id: string;
     username: string;
@@ -11,6 +34,8 @@ export interface User {
     myRecipes: string[];
     password?: string; // Optional because we don't store it for all users/admins in all views
     role?: 'user' | 'admin';
+    isSuperAdmin?: boolean; // True for Shreyas Gandhi and Raj Vishwakarma
+    permissions?: SubAdminPermissions; // For sub admins
     status: 'active' | 'disabled' | 'deleted';
     joinedAt: string; // ISO Date string
     recipesPosted: string[]; // Duplicate of myRecipes but specifically requested

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Recipe } from '../../types';
 import { useApp } from '../../context/AppContext';
+import { addReport } from '../../utils/adminUtils';
 
 interface RecipeDetailModalProps {
     recipe: Recipe;
@@ -52,6 +53,18 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
     const [replyText, setReplyText] = useState("");
     const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
     const [editCommentText, setEditCommentText] = useState("");
+
+    // Report State
+    const [reportTarget, setReportTarget] = useState<{ type: 'recipe' | 'comment' | 'user', id: string, name: string } | null>(null);
+    const [reportReason, setReportReason] = useState("");
+
+    const handleSubmitReport = () => {
+        if (!currentUser || !reportTarget || !reportReason.trim()) return;
+        addReport(reportTarget.type, reportTarget.id, reportTarget.name, currentUser.username, reportReason.trim());
+        alert("Report submitted successfully.");
+        setReportTarget(null);
+        setReportReason("");
+    };
 
     useEffect(() => {
         const loadComments = () => {
@@ -126,6 +139,29 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
         setEditCommentText("");
     };
 
+    if (reportTarget) {
+        return (
+            <div className="modal-overlay" onClick={() => setReportTarget(null)} style={{ zIndex: 10000 }}>
+                <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+                    <h2 style={{ margin: '0 0 16px 0' }}>Report {reportTarget.type}</h2>
+                    <p style={{ margin: '0 0 16px 0', color: '#6b7280' }}>
+                        Reporting: <strong>{reportTarget.name}</strong>
+                    </p>
+                    <textarea
+                        value={reportReason}
+                        onChange={e => setReportReason(e.target.value)}
+                        placeholder="Please explain why you are reporting this..."
+                        style={{ width: '100%', height: '100px', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '16px', boxSizing: 'border-box' }}
+                    />
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        <button onClick={() => setReportTarget(null)} style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #d1d5db', background: 'white', cursor: 'pointer' }}>Cancel</button>
+                        <button onClick={handleSubmitReport} disabled={!reportReason.trim()} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#dc2626', color: 'white', cursor: reportReason.trim() ? 'pointer' : 'not-allowed', opacity: reportReason.trim() ? 1 : 0.5 }}>Submit Report</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     if (isCookingMode) {
         return (
             <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: '#111827', color: 'white', zIndex: 9999, display: 'flex', flexDirection: 'column' }}>
@@ -193,12 +229,18 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                 </button>
                 <div style={{ display: 'flex', gap: '12px', color: '#6b7280', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
                     <span>By @{recipe.hostName}</span>
+                    {currentUser && currentUser.id !== recipe.hostId && (
+                        <button onClick={() => setReportTarget({ type: 'user', id: recipe.hostId, name: recipe.hostName })} style={{ background: '#fee2e2', color: '#dc2626', border: 'none', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer' }}>Report User</button>
+                    )}
                     <span>•</span>
                     <span>⏱️ {recipe.time} min</span>
                     <span>•</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         ⭐ {recipe.rating} ({recipe.reviews})
                     </span>
+                    {currentUser && currentUser.id !== recipe.hostId && (
+                        <button onClick={() => setReportTarget({ type: 'recipe', id: recipe.id, name: recipe.title })} style={{ background: '#fee2e2', color: '#dc2626', border: 'none', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer', marginLeft: 'auto' }}>🚩 Report Recipe</button>
+                    )}
                 </div>
 
                 {viewMode === 'user' && (
@@ -320,6 +362,9 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                                             )}
                                             <button onClick={() => handleDeleteComment(comment.commentId)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '14px' }}>Delete</button>
                                         </div>
+                                    )}
+                                    {currentUser && currentUser.id !== comment.userId && (
+                                        <button onClick={() => setReportTarget({ type: 'comment', id: comment.commentId, name: comment.text.substring(0, 20) })} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '14px' }}>🚩 Report</button>
                                     )}
                                 </div>
 

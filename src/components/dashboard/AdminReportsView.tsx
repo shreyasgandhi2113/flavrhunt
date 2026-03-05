@@ -29,6 +29,8 @@ interface Comment {
 
 export const AdminReportsView: React.FC<AdminReportsViewProps> = ({ onNavigateToUser, onNavigateToRecipe, onNavigateToComment }) => {
     const { currentUser, deleteUser, deleteRecipe } = useApp();
+    const isSuper = currentUser?.isSuperAdmin;
+    const p = currentUser?.permissions;
     const [reports, setReports] = useState<Report[]>([]);
 
     useEffect(() => {
@@ -124,9 +126,11 @@ export const AdminReportsView: React.FC<AdminReportsViewProps> = ({ onNavigateTo
                                     <button onClick={() => handleViewTarget(rep)} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
                                         View
                                     </button>
-                                    <button onClick={() => handleDeleteTarget(rep)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
-                                        Delete
-                                    </button>
+                                    {(isSuper || (rep.reportType === 'user' && p?.deleteUsers) || (rep.reportType === 'recipe' && p?.deleteRecipes) || (rep.reportType === 'comment' && p?.deleteComments)) && (
+                                        <button onClick={() => handleDeleteTarget(rep)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
+                                            Delete
+                                        </button>
+                                    )}
                                     {rep.status === 'pending' && (
                                         <button onClick={() => handleMarkResolved(rep)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
                                             Resolve

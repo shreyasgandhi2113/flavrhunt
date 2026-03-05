@@ -27,6 +27,7 @@ interface AdminCommentsViewProps {
 
 export const AdminCommentsView: React.FC<AdminCommentsViewProps> = ({ onNavigateToRecipe, onNavigateToUser }) => {
     const { currentUser, recipes } = useApp();
+    const canDelete = currentUser?.isSuperAdmin || currentUser?.permissions?.deleteComments;
     const [comments, setComments] = useState<Comment[]>([]);
     const [search, setSearch] = useState('');
 
@@ -105,9 +106,11 @@ export const AdminCommentsView: React.FC<AdminCommentsViewProps> = ({ onNavigate
                                     {new Date(c.createdAt).toLocaleDateString()} {new Date(c.createdAt).toLocaleTimeString()}
                                 </td>
                                 <td style={{ padding: '12px' }}>
-                                    <button onClick={() => handleDeleteComment(c.commentId, c.text)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>
-                                        Delete Comment
-                                    </button>
+                                    {canDelete && (
+                                        <button onClick={() => handleDeleteComment(c.commentId, c.text)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>
+                                            Delete Comment
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}

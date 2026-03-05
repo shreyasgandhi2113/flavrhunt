@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminUsersView } from './AdminUsersView';
 import { AdminRecipesView } from './AdminRecipesView';
@@ -7,31 +7,55 @@ import { AdminActivityView } from './AdminActivityView';
 import { AdminTrashView } from './AdminTrashView';
 import { AdminCommentsView } from './AdminCommentsView';
 import { AdminReportsView } from './AdminReportsView';
+import { AdminManagementView } from './AdminManagementView';
 
-type AdminViewProp = 'users' | 'recipes' | 'comments' | 'reports' | 'activity' | 'trash' | 'maintenance';
+type AdminViewProp = 'users' | 'recipes' | 'comments' | 'reports' | 'activity' | 'trash' | 'maintenance' | 'admin-management';
 
 import logo from '../../assets/flavrhunt-logo.png';
 
 export const AdminDashboard: React.FC = () => {
-    const { logout } = useApp();
+    const { logout, currentUser } = useApp();
     const [currentView, setCurrentView] = useState<AdminViewProp>('users');
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
 
+    const p = currentUser?.permissions;
+    const isSuper = currentUser?.isSuperAdmin;
+
+    const availableViews: AdminViewProp[] = [];
+    if (isSuper || p?.viewUsers) availableViews.push('users');
+    if (isSuper || p?.viewRecipes) availableViews.push('recipes');
+    if (isSuper || p?.viewComments) availableViews.push('comments');
+    if (isSuper || p?.moderateReports) availableViews.push('reports');
+    if (isSuper || p?.viewLogs) availableViews.push('activity');
+    if (isSuper || p?.trashControl) availableViews.push('trash');
+    if (isSuper || p?.maintenanceControl) availableViews.push('maintenance');
+    if (isSuper) availableViews.push('admin-management');
+
+    useEffect(() => {
+        if (!availableViews.includes(currentView) && availableViews.length > 0) {
+            setCurrentView(availableViews[0]);
+        }
+    }, [currentUser, currentView, availableViews]);
+
     const handleNavigateToRecipe = (recipeId: string) => {
-        setSelectedRecipeId(recipeId);
-        setCurrentView('recipes');
+        if (availableViews.includes('recipes')) {
+            setSelectedRecipeId(recipeId);
+            setCurrentView('recipes');
+        }
     };
 
     const handleNavigateToUser = (userId: string) => {
-        setSelectedUserId(userId);
-        setCurrentView('users');
+        if (availableViews.includes('users')) {
+            setSelectedUserId(userId);
+            setCurrentView('users');
+        }
     };
 
     const handleNavigateToComment = (_commentId: string) => {
-        setCurrentView('comments');
-        // Need to add some state to navigate directly to comment?
-        // Let's just switch to comments view for now.
+        if (availableViews.includes('comments')) {
+            setCurrentView('comments');
+        }
     };
 
     return (
@@ -45,7 +69,7 @@ export const AdminDashboard: React.FC = () => {
 
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingRight: '12px' }}>
-                        {(['activity', 'users', 'recipes', 'comments', 'reports', 'trash', 'maintenance'] as const).map(view => (
+                        {availableViews.map(view => (
                             <button
                                 key={view}
                                 onClick={() => setCurrentView(view)}
@@ -61,7 +85,7 @@ export const AdminDashboard: React.FC = () => {
                                     whiteSpace: 'nowrap'
                                 }}
                             >
-                                {view}
+                                {view.replace('-', ' ')}
                             </button>
                         ))}
                     </div>
@@ -100,6 +124,7 @@ export const AdminDashboard: React.FC = () => {
                 {currentView === 'activity' && <AdminActivityView />}
                 {currentView === 'trash' && <AdminTrashView />}
                 {currentView === 'maintenance' && <AdminMaintenanceView />}
+                {currentView === 'admin-management' && <AdminManagementView />}
             </div>
         </div>
     );

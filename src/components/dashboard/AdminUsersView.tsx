@@ -13,7 +13,8 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
     onClearSelectedUser,
     onNavigateToRecipe
 }) => {
-    const { users, recipes, toggleUserStatus, deleteUser } = useApp();
+    const { users, recipes, toggleUserStatus, deleteUser, currentUser } = useApp();
+    const canDelete = currentUser?.isSuperAdmin || currentUser?.permissions?.deleteUsers;
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -123,33 +124,37 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <button
-                                onClick={() => toggleUserStatus(selectedUser.id)}
-                                style={{
-                                    padding: '8px',
-                                    borderRadius: '4px',
-                                    border: '1px solid #ccc',
-                                    cursor: 'pointer',
-                                    background: selectedUser.status === 'active' ? '#fef3c7' : '#d1fae5',
-                                    color: selectedUser.status === 'active' ? '#92400e' : '#065f46'
-                                }}
-                            >
-                                {selectedUser.status === 'active' ? 'Disable Account' : 'Enable Account'}
-                            </button>
+                            {canDelete && (
+                                <button
+                                    onClick={() => toggleUserStatus(selectedUser.id)}
+                                    style={{
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #ccc',
+                                        cursor: 'pointer',
+                                        background: selectedUser.status === 'active' ? '#fef3c7' : '#d1fae5',
+                                        color: selectedUser.status === 'active' ? '#92400e' : '#065f46'
+                                    }}
+                                >
+                                    {selectedUser.status === 'active' ? 'Disable Account' : 'Enable Account'}
+                                </button>
+                            )}
 
-                            <button
-                                onClick={() => handleDeleteUser(selectedUser.id)}
-                                style={{
-                                    padding: '8px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    background: '#ef4444',
-                                    color: 'white'
-                                }}
-                            >
-                                Delete User
-                            </button>
+                            {canDelete && (
+                                <button
+                                    onClick={() => handleDeleteUser(selectedUser.id)}
+                                    style={{
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        background: '#ef4444',
+                                        color: 'white'
+                                    }}
+                                >
+                                    Delete User
+                                </button>
+                            )}
                         </div>
 
                         {/* Mini Recipe List */}

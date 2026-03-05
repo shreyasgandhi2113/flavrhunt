@@ -368,6 +368,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 myRecipes: [],
                 password: admin.password,
                 role: 'admin',
+                isSuperAdmin: true,
                 status: 'active',
                 joinedAt: new Date().toISOString(),
                 recipesPosted: []
@@ -375,6 +376,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setCurrentUser(adminUser);
             return true;
         }
+
+        try {
+            const storedSubAdmins = localStorage.getItem('flavrSubAdmins');
+            if (storedSubAdmins) {
+                const subAdmins = JSON.parse(storedSubAdmins);
+                const subAdmin = subAdmins.find((sa: any) => sa.username.toLowerCase() === trimmedUsername && sa.password === trimmedPass);
+
+                if (subAdmin) {
+                    if (subAdmin.status === 'disabled') {
+                        alert("Your sub admin account is disabled. Please contact the main owner.");
+                        return false;
+                    }
+
+                    const subAdminUser: User = {
+                        id: subAdmin.subAdminId,
+                        username: subAdmin.username,
+                        email: 'subadmin@flavrhunt.com',
+                        fullName: 'Sub Admin',
+                        age: 99,
+                        preference: 'All',
+                        likedRecipes: [],
+                        watchLaterRecipes: [],
+                        myRecipes: [],
+                        password: subAdmin.password,
+                        role: 'admin',
+                        isSuperAdmin: false,
+                        permissions: subAdmin.permissions,
+                        status: 'active',
+                        joinedAt: new Date(subAdmin.createdAt).toISOString(),
+                        recipesPosted: []
+                    };
+                    setCurrentUser(subAdminUser);
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.error("Failed to check sub admins", e);
+        }
+
         return false;
     };
 
