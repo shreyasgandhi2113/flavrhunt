@@ -79,3 +79,26 @@ export interface Recipe {
     ratings: Record<string, number>;
     status?: 'active' | 'deleted';
 }
+
+export interface DisabledFeatures {
+    postRecipes: boolean;
+    comments: boolean;
+    ratings: boolean;
+    registration: boolean;
+    search: boolean;
+    editing: boolean;
+}
+
+export interface MaintenanceSettings {
+    maintenanceActive: boolean;
+    maintenanceType: 'full' | 'partial';
+    schedulingMode: 'immediate' | 'scheduled' | 'countdown';
+    startTime: string | null;
+    endTime: string | null;
+    countdownMinutes: number | null;
+    countdownStartedAt: number | null;
+    messageTitle: string;
+    messageDescription: string;
+    eta: string;
+    disabledFeatures: DisabledFeatures;
+}

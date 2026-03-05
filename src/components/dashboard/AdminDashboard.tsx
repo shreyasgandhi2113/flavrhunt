@@ -14,7 +14,7 @@ type AdminViewProp = 'users' | 'recipes' | 'comments' | 'reports' | 'activity' |
 import logo from '../../assets/flavrhunt-logo.png';
 
 export const AdminDashboard: React.FC = () => {
-    const { logout, currentUser } = useApp();
+    const { logout, currentUser, maintenanceStatus, maintenanceSettings } = useApp();
     const [currentView, setCurrentView] = useState<AdminViewProp>('users');
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
@@ -65,6 +65,27 @@ export const AdminDashboard: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <img src={logo} alt="FlavrHunt" style={{ height: '40px', width: 'auto' }} />
                     <span style={{ fontWeight: 'bold', fontSize: '18px' }}>FlavrHunt Admin</span>
+                    {/* Live Status Badge */}
+                    <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '6px',
+                        padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 600,
+                        background: maintenanceStatus === 'active' ? 'rgba(220,38,38,0.2)'
+                            : (maintenanceStatus === 'pending' || maintenanceSettings.startTime || maintenanceSettings.countdownStartedAt) ? 'rgba(245,158,11,0.2)'
+                                : 'rgba(16,185,129,0.2)',
+                        color: maintenanceStatus === 'active' ? '#fca5a5'
+                            : (maintenanceStatus === 'pending' || maintenanceSettings.startTime || maintenanceSettings.countdownStartedAt) ? '#fcd34d'
+                                : '#6ee7b7'
+                    }}>
+                        <span style={{
+                            width: '6px', height: '6px', borderRadius: '50%',
+                            background: maintenanceStatus === 'active' ? '#ef4444'
+                                : (maintenanceStatus === 'pending' || maintenanceSettings.startTime || maintenanceSettings.countdownStartedAt) ? '#f59e0b'
+                                    : '#10b981'
+                        }} />
+                        {maintenanceStatus === 'active' ? 'Maintenance Active'
+                            : (maintenanceStatus === 'pending' || maintenanceSettings.startTime || maintenanceSettings.countdownStartedAt) ? 'Scheduled'
+                                : 'Live'}
+                    </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>

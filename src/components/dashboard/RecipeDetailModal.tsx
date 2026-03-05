@@ -27,7 +27,7 @@ interface Comment {
 }
 
 export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, onClose, viewMode = 'user' }) => {
-    const { toggleLike, toggleWatchLater, currentUser, rateRecipe } = useApp();
+    const { toggleLike, toggleWatchLater, currentUser, rateRecipe, isFeatureDisabled } = useApp();
 
     const isLiked = currentUser?.likedRecipes.includes(recipe.id);
     const isWatchLater = currentUser?.watchLaterRecipes.includes(recipe.id);
@@ -262,7 +262,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                     </div>
                 )}
 
-                {viewMode === 'user' && (
+                {viewMode === 'user' && !isFeatureDisabled('ratings') && (
                     <section style={{ marginBottom: '24px' }}>
                         <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>Rate this recipe</h3>
                         <div style={{ display: 'flex', gap: '8px' }}>
@@ -323,7 +323,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                 <section style={{ marginTop: '32px', borderTop: '1px solid #e5e7eb', paddingTop: '24px' }}>
                     <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>Discussion</h3>
 
-                    {currentUser && viewMode === 'user' && (
+                    {currentUser && viewMode === 'user' && !isFeatureDisabled('comments') && (
                         <div style={{ marginBottom: '24px' }}>
                             <textarea
                                 value={newComment}
@@ -342,6 +342,11 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                                     Post Comment
                                 </button>
                             </div>
+                        </div>
+                    )}
+                    {isFeatureDisabled('comments') && (
+                        <div style={{ background: '#fef3c7', color: '#92400e', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', textAlign: 'center' }}>
+                            💬 Comments are temporarily disabled during maintenance.
                         </div>
                     )}
 
@@ -386,7 +391,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                                     </button>
                                 </div>
 
-                                {replyingTo === comment.commentId && currentUser && viewMode === 'user' && (
+                                {replyingTo === comment.commentId && currentUser && viewMode === 'user' && !isFeatureDisabled('comments') && (
                                     <div style={{ marginTop: '12px', paddingLeft: '16px', borderLeft: '2px solid #e5e7eb' }}>
                                         <div style={{ display: 'flex', gap: '8px' }}>
                                             <input

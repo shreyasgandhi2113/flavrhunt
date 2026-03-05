@@ -7,7 +7,7 @@ import MaintenancePage from './components/dashboard/MaintenancePage';
 import './index.css';
 
 function App() {
-  const { currentUser, maintenanceStatus, maintenanceStartTime, setMaintenanceStatus } = useApp();
+  const { currentUser, maintenanceStatus, maintenanceStartTime, setMaintenanceStatus, maintenanceSettings } = useApp();
   const [remaining, setRemaining] = useState<number | null>(null);
   const [acknowledged, setAcknowledged] = useState<boolean>(() => sessionStorage.getItem('flavrMaintenanceAcknowledged') === 'true');
   const DURATION = 30;
@@ -65,7 +65,7 @@ function App() {
     );
   }
 
-  if (maintenanceStatus === 'active') {
+  if (maintenanceStatus === 'active' && maintenanceSettings.maintenanceType === 'full') {
     return <MaintenancePage />;
   }
 

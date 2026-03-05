@@ -13,7 +13,7 @@ interface MainFeedProps {
 }
 
 export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleTheme }) => {
-    const { recipes, currentUser, getRecipeById } = useApp();
+    const { recipes, currentUser, getRecipeById, isFeatureDisabled } = useApp();
 
     // Local State
     const [searchQuery, setSearchQuery] = useState('');
@@ -140,16 +140,18 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
                             {isDarkMode ? '☀️' : '🌙'}
                         </button>
                     )}
-                    <button className="post-btn" onClick={() => {
-                        setRecipeToEdit(undefined);
-                        setIsPostModalOpen(true);
-                    }}>
-                        <span>+</span> Post Recipe
-                    </button>
+                    {!isFeatureDisabled('postRecipes') && (
+                        <button className="post-btn" onClick={() => {
+                            setRecipeToEdit(undefined);
+                            setIsPostModalOpen(true);
+                        }}>
+                            <span>+</span> Post Recipe
+                        </button>
+                    )}
                 </div>
             </div>
 
-            <SearchBar onSearch={handleSearch} />
+            {!isFeatureDisabled('search') && <SearchBar onSearch={handleSearch} />}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
                 <select
@@ -180,10 +182,10 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
                         recipe={recipe}
                         variant="standard"
                         onClick={(id: string) => setSelectedRecipeId(id)}
-                        onEdit={(recipe) => {
+                        onEdit={!isFeatureDisabled('editing') ? (recipe) => {
                             setRecipeToEdit(recipe);
                             setIsPostModalOpen(true);
-                        }}
+                        } : undefined}
                     />
                 ))}
 

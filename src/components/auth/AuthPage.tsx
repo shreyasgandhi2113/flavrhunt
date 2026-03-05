@@ -29,7 +29,7 @@ const FALLBACK_RECIPE: Recipe = {
 };
 
 export default function AuthPage() {
-    const { login, signup, adminLogin, recipes, maintenanceStatus, users } = useApp();
+    const { login, signup, adminLogin, recipes, maintenanceStatus, users, isFeatureDisabled } = useApp();
 
     // Latest recipe is first (we prepend on post)
     const latestRecipe = useMemo(() => recipes[0] ?? FALLBACK_RECIPE, [recipes]);
@@ -279,12 +279,14 @@ export default function AuthPage() {
                             >
                                 Sign in
                             </button>
-                            <button
-                                className={`auth-tab ${mode === 'signup' ? 'active' : ''}`}
-                                onClick={() => { setMode('signup'); setMessage(''); setError(''); setTouchedFields({}); }}
-                            >
-                                Sign up
-                            </button>
+                            {!isFeatureDisabled('registration') && (
+                                <button
+                                    className={`auth-tab ${mode === 'signup' ? 'active' : ''}`}
+                                    onClick={() => { setMode('signup'); setMessage(''); setError(''); setTouchedFields({}); }}
+                                >
+                                    Sign up
+                                </button>
+                            )}
                         </div>
                     )}
 

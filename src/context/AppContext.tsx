@@ -1,6 +1,29 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { User, Recipe } from '../types';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { User, Recipe, MaintenanceSettings, DisabledFeatures } from '../types';
 import { addAdminLog } from '../utils/adminUtils';
+
+const DEFAULT_DISABLED_FEATURES: DisabledFeatures = {
+    postRecipes: false,
+    comments: false,
+    ratings: false,
+    registration: false,
+    search: false,
+    editing: false
+};
+
+const DEFAULT_MAINTENANCE_SETTINGS: MaintenanceSettings = {
+    maintenanceActive: false,
+    maintenanceType: 'full',
+    schedulingMode: 'immediate',
+    startTime: null,
+    endTime: null,
+    countdownMinutes: null,
+    countdownStartedAt: null,
+    messageTitle: '',
+    messageDescription: '',
+    eta: '',
+    disabledFeatures: DEFAULT_DISABLED_FEATURES
+};
 
 interface AppContextType {
     currentUser: User | null;
@@ -26,6 +49,9 @@ interface AppContextType {
     permanentDeleteUser: (userId: string, deleteRecipes: boolean) => void;
     deleteRecipe: (recipeId: string) => void;
     permanentDeleteRecipe: (recipeId: string) => void;
+    maintenanceSettings: MaintenanceSettings;
+    setMaintenanceSettings: (settings: MaintenanceSettings) => void;
+    isFeatureDisabled: (feature: keyof DisabledFeatures) => boolean;
 }
 // ... (skip down to Provider return)
 
@@ -231,12 +257,94 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     }, [maintenanceStartTime]);
 
+    // === Advanced Maintenance Settings ===
+    const [maintenanceSettings, setMaintenanceSettingsState] = useState<MaintenanceSettings>(() => {
+        try {
+            const saved = localStorage.getItem('flavrMaintenanceSettings');
+            if (saved) return { ...DEFAULT_MAINTENANCE_SETTINGS, ...JSON.parse(saved) };
+            return DEFAULT_MAINTENANCE_SETTINGS;
+        } catch { return DEFAULT_MAINTENANCE_SETTINGS; }
+    });
+
+    const setMaintenanceSettings = useCallback((settings: MaintenanceSettings) => {
+        setMaintenanceSettingsState(settings);
+        localStorage.setItem('flavrMaintenanceSettings', JSON.stringify(settings));
+    }, []);
+
+    // Persist maintenanceSettings
+    useEffect(() => {
+        localStorage.setItem('flavrMaintenanceSettings', JSON.stringify(maintenanceSettings));
+    }, [maintenanceSettings]);
+
+    // Sync maintenanceSettings across tabs
+    useEffect(() => {
+        const handleStorage = (e: StorageEvent) => {
+            if (e.key === 'flavrMaintenanceSettings' && e.newValue) {
+                try {
+                    setMaintenanceSettingsState({ ...DEFAULT_MAINTENANCE_SETTINGS, ...JSON.parse(e.newValue) });
+                } catch { /* ignore */ }
+            }
+        };
+        window.addEventListener('storage', handleStorage);
+        return () => window.removeEventListener('storage', handleStorage);
+    }, []);
+
+    // Scheduled maintenance auto-activation/deactivation
+    useEffect(() => {
+        if (maintenanceSettings.schedulingMode !== 'scheduled') return;
+        if (!maintenanceSettings.startTime) return;
+
+        const interval = window.setInterval(() => {
+            const now = Date.now();
+            const start = new Date(maintenanceSettings.startTime!).getTime();
+            const end = maintenanceSettings.endTime ? new Date(maintenanceSettings.endTime).getTime() : null;
+
+            if (now >= start && maintenanceStatus !== 'active' && (!end || now < end)) {
+                setMaintenanceStatus('active');
+                localStorage.setItem('flavrMaintenanceStatus', 'active');
+            }
+            if (end && now >= end && maintenanceStatus === 'active') {
+                setMaintenanceStatus('off');
+                localStorage.setItem('flavrMaintenanceStatus', 'off');
+                localStorage.removeItem('flavrMaintenanceStartTime');
+                setMaintenanceSettings({ ...maintenanceSettings, maintenanceActive: false, startTime: null, endTime: null });
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [maintenanceSettings, maintenanceStatus, setMaintenanceStatus, setMaintenanceSettings]);
+
+    // Countdown maintenance auto-activation
+    useEffect(() => {
+        if (maintenanceSettings.schedulingMode !== 'countdown') return;
+        if (!maintenanceSettings.countdownStartedAt || !maintenanceSettings.countdownMinutes) return;
+
+        const interval = window.setInterval(() => {
+            const elapsed = (Date.now() - maintenanceSettings.countdownStartedAt!) / 1000;
+            const totalSec = maintenanceSettings.countdownMinutes! * 60;
+            if (elapsed >= totalSec && maintenanceStatus !== 'active') {
+                setMaintenanceStatus('active');
+                localStorage.setItem('flavrMaintenanceStatus', 'active');
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [maintenanceSettings, maintenanceStatus, setMaintenanceStatus]);
+
+    const isFeatureDisabled = useCallback((feature: keyof DisabledFeatures): boolean => {
+        if (maintenanceStatus === 'active' && maintenanceSettings.maintenanceType === 'full') return true;
+        if (maintenanceSettings.maintenanceType === 'partial') {
+            return maintenanceSettings.disabledFeatures[feature] === true;
+        }
+        return false;
+    }, [maintenanceStatus, maintenanceSettings]);
+
     // Auto logout when maintenance becomes active
     useEffect(() => {
-        if (maintenanceStatus === 'active' && currentUser && currentUser.role !== 'admin') {
+        if (maintenanceStatus === 'active' && maintenanceSettings.maintenanceType === 'full' && currentUser && currentUser.role !== 'admin') {
             setCurrentUser(null);
         }
-    }, [maintenanceStatus, currentUser]);
+    }, [maintenanceStatus, currentUser, maintenanceSettings.maintenanceType]);
 
     const login = (username: string, _pass: string) => {
         const user = users.find(u => u.username === username);
@@ -595,7 +703,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             deleteUser,
             permanentDeleteUser,
             deleteRecipe,
-            permanentDeleteRecipe
+            permanentDeleteRecipe,
+            maintenanceSettings,
+            setMaintenanceSettings,
+            isFeatureDisabled
         }}>
             {children}
         </AppContext.Provider>
