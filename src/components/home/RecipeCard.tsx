@@ -171,6 +171,42 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
                             ❤️
                         </div>
                     )}
+
+                    {isOwner && onEdit && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit(recipe);
+                            }}
+                            className="recipe-edit-btn"
+                            style={{
+                                position: 'absolute',
+                                top: '16px',
+                                right: '16px',
+                                background: 'rgba(255, 255, 255, 0.9)',
+                                backdropFilter: 'blur(4px)',
+                                border: '1px solid #E5E7EB',
+                                borderRadius: '8px',
+                                padding: '6px 12px',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                color: '#374151',
+                                transition: 'all 0.2s ease',
+                                zIndex: 5,
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.borderColor = 'var(--primary-accent)';
+                                e.currentTarget.style.color = 'var(--primary-accent)';
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.borderColor = '#E5E7EB';
+                                e.currentTarget.style.color = '#374151';
+                            }}
+                        >
+                            Edit
+                        </button>
+                    )}
                 </div>
 
                 <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
