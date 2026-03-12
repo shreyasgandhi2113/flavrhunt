@@ -225,6 +225,11 @@ export default function AuthPage() {
                         <img src={logo} alt="FlavrHunt" className="logo-image" />
                     </div>
 
+                    <h2 className="brand-tagline">Discover. Cook. Share.</h2>
+                    <p className="brand-description">
+                        Explore recipes from cooks around the world.
+                    </p>
+
                     <div className="recipe-card-preview fade-in">
                         <div className="preview-image" style={{
                             background: (latestRecipe.image.startsWith('http') || latestRecipe.image.startsWith('data:')) ? `url(${latestRecipe.image})` : latestRecipe.image,
@@ -239,7 +244,7 @@ export default function AuthPage() {
                         </div>
                         <div className="preview-content">
                             <h3>{latestRecipe.title}</h3>
-                            <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 8px 0' }}>
+                            <p style={{ fontSize: '12px', color: '#9CA3AF', margin: '4px 0 8px 0', fontWeight: 500 }}>
                                 by @{latestRecipe.hostName}
                             </p>
                             <div className="preview-rating">
@@ -261,14 +266,14 @@ export default function AuthPage() {
             <div className={`auth-form-panel ${isShaking ? 'shake-animation' : ''}`}>
                 <div className="auth-form-container fade-in">
                     {maintenanceStatus === 'active' && (
-                        <div style={{ background: '#fef3c7', color: '#92400e', padding: '12px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center', border: '1px solid #f59e0b' }}>
+                        <div className="auth-alert auth-alert-warning">
                             <strong>⚠️ FlavrHunt is currently under maintenance.</strong><br />
                             <span style={{ fontSize: '13px' }}>User sign in and sign up are disabled.</span>
                         </div>
                     )}
                     <div className="auth-header">
                         <h1>{mode === 'signin' ? 'Welcome back' : mode === 'signup' ? 'Create account' : 'Admin Login'}</h1>
-                        <p>{mode === 'signin' ? 'Enter your credentials to continue' : mode === 'signup' ? 'Fill in your details to join' : 'Restricted access area'}</p>
+                        <p>{mode === 'signin' ? 'Sign in to continue exploring recipes' : mode === 'signup' ? 'Fill in your details to join the community' : 'Restricted access area'}</p>
                     </div>
 
                     {mode !== 'admin' && maintenanceStatus !== 'active' && (
@@ -290,8 +295,8 @@ export default function AuthPage() {
                         </div>
                     )}
 
-                    {message && <div style={{ background: '#d1fae5', color: '#065f46', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>{message}</div>}
-                    {error && <div style={{ background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
+                    {message && <div className="auth-alert auth-alert-success">{message}</div>}
+                    {error && <div className="auth-alert auth-alert-error">{error}</div>}
 
                     <form className="auth-form" onSubmit={handleSubmit}>
                         {/* Form content remains same */}
@@ -410,8 +415,8 @@ export default function AuthPage() {
                             className={`submit-btn ${isSuccess ? 'success-animation' : ''} ${error && isShaking ? 'error-animation' : ''}`}
                             disabled={isLoginBlocked || !isFormValid}
                             style={{
-                                background: mode === 'admin' ? '#ef4444' : undefined,
-                                opacity: (isLoginBlocked || !isFormValid) ? 0.6 : 1,
+                                background: mode === 'admin' ? '#EF4444' : undefined,
+                                opacity: (isLoginBlocked || !isFormValid) ? 0.5 : 1,
                                 cursor: (isLoginBlocked || !isFormValid) ? 'not-allowed' : 'pointer'
                             }}
                         >
@@ -431,12 +436,12 @@ export default function AuthPage() {
                             )}
                         </button>
 
-                        <div style={{ marginTop: '16px', textAlign: 'center' }}>
+                        <div className="auth-secondary-action">
                             {mode !== 'admin' ? (
                                 <button
                                     type="button"
                                     onClick={() => { setMode('admin'); setMessage(''); setError(''); setFormData(prev => ({ ...prev, username: '', password: '' })); }}
-                                    style={{ background: 'transparent', border: 'none', color: '#6b7280', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+                                    className="auth-secondary-btn"
                                 >
                                     Admin Login
                                 </button>
@@ -444,9 +449,9 @@ export default function AuthPage() {
                                 <button
                                     type="button"
                                     onClick={() => { setMode('signin'); setMessage(''); setError(''); setFormData(prev => ({ ...prev, username: '', password: '' })); }}
-                                    style={{ background: 'transparent', border: 'none', color: '#6b7280', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+                                    className="auth-secondary-btn"
                                 >
-                                    Back to User Login
+                                    ← Back to User Login
                                 </button>
                             )}
                         </div>

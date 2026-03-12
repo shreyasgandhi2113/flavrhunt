@@ -10,17 +10,50 @@ export default function MaintenancePage() {
     const eta = maintenanceSettings.eta || '';
 
     return (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f3f4f6' }}>
-            <div style={{ textAlign: 'center', marginBottom: '32px', maxWidth: '600px', padding: '0 24px' }}>
-                <h1 style={{ marginBottom: 12, fontSize: '28px', color: '#1f2937' }}>{title}</h1>
-                <p style={{ marginBottom: 16, color: '#4b5563', fontSize: '16px', lineHeight: 1.6 }}>{desc}</p>
+        <div style={{
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#F7F7F8',
+            fontFamily: "'Inter', system-ui, -apple-system, sans-serif"
+        }}>
+            <div style={{
+                textAlign: 'center',
+                marginBottom: '32px',
+                maxWidth: '560px',
+                padding: '0 24px'
+            }}>
+                <h1 style={{
+                    marginBottom: 12,
+                    fontSize: '28px',
+                    fontWeight: 700,
+                    color: '#111111',
+                    letterSpacing: '-0.5px'
+                }}>
+                    {title}
+                </h1>
+                <p style={{
+                    marginBottom: 16,
+                    color: '#6B7280',
+                    fontSize: '16px',
+                    lineHeight: 1.6,
+                    fontWeight: 400
+                }}>
+                    {desc}
+                </p>
                 {eta && (
                     <div style={{
                         display: 'inline-block',
-                        background: '#dbeafe', color: '#1e40af',
-                        padding: '10px 20px', borderRadius: '8px',
-                        fontWeight: 600, fontSize: '14px',
-                        marginBottom: 20
+                        background: 'rgba(255, 122, 24, 0.08)',
+                        color: '#FF7A18',
+                        padding: '10px 20px',
+                        borderRadius: '10px',
+                        fontWeight: 600,
+                        fontSize: '14px',
+                        marginBottom: 20,
+                        border: '1px solid rgba(255, 122, 24, 0.15)'
                     }}>
                         🕐 {eta}
                     </div>

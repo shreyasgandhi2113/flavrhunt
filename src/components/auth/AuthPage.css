@@ -1,97 +1,127 @@
+/* =============================================================
+   FlavrHunt Auth Page — Apple-Inspired Premium Design
+   ============================================================= */
+
+/* ── Page Layout ── */
 .auth-page {
     min-height: 100vh;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background: var(--gray-50);
+    background: #F7F7F8;
     margin: 0;
     padding: 0;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Left Panel - Brand Section */
+/* Subtle radial glow behind brand area */
+.auth-page::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 122, 24, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Left Panel — Brand Section ── */
 .auth-brand-panel {
-    background: linear-gradient(145deg, #14b8a6 0%, #0891b2 50%, #3b82f6 100%);
-    padding: 48px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 64px 48px;
     position: relative;
     overflow: hidden;
-}
-
-.auth-brand-panel::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
-    animation: pulse 8s infinite;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-    }
+    background: transparent;
+    z-index: 1;
 }
 
 .brand-content {
     position: relative;
     z-index: 1;
     text-align: center;
-    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
 }
 
 .brand-logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 48px;
+    margin-bottom: 40px;
 }
 
 .logo-image {
-    width: 280px;
+    width: 220px;
     height: auto;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-    transition: transform var(--transition-normal);
+    filter: drop-shadow(0 8px 24px rgba(255, 122, 24, 0.15));
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .logo-image:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
-/* Recipe Card Preview */
+/* Tagline and Description */
+.brand-tagline {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111111;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.brand-description {
+    font-size: 16px;
+    font-weight: 400;
+    color: #6B7280;
+    line-height: 1.6;
+    max-width: 320px;
+}
+
+/* Recipe Card Preview — refined glassmorphism */
 .recipe-card-preview {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: var(--shadow-xl);
-    max-width: 280px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
+    max-width: 300px;
     animation: float 6s ease-in-out infinite;
+    margin-top: 40px;
+    transition: box-shadow 0.3s ease;
+}
+
+.recipe-card-preview:hover {
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
 .preview-image {
     width: 100%;
     height: 140px;
-    border-radius: 12px;
-    margin-bottom: 12px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    background-size: cover;
+    background-position: center;
 }
 
 .preview-content h3 {
     font-size: 16px;
     font-weight: 600;
-    color: var(--gray-800);
+    color: #111111;
     margin-bottom: 8px;
+    letter-spacing: -0.2px;
 }
 
 .preview-rating {
@@ -101,42 +131,31 @@
     margin-bottom: 12px;
 }
 
+.preview-rating .stars {
+    color: #FF7A18;
+    font-size: 14px;
+}
+
 .preview-rating .count {
     font-size: 12px;
-    color: var(--gray-500);
+    color: #9CA3AF;
+    font-weight: 500;
 }
 
 .preview-tags {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
 }
 
 .preview-tags .tag {
     padding: 4px 10px;
     border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    background: var(--chip-vegan);
-    color: var(--chip-vegan-text);
-}
-
-.brand-text {
-    margin-top: 48px;
-    text-align: center;
-}
-
-.brand-text h2 {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    line-height: 1.2;
-}
-
-.brand-text p {
-    font-size: 16px;
-    opacity: 0.9;
-    line-height: 1.6;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 122, 24, 0.1);
+    color: #FF7A18;
+    letter-spacing: 0.2px;
 }
 
 @keyframes float {
@@ -147,184 +166,128 @@
     }
 
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
 }
 
-.recipe-card-image {
-    width: 100%;
-    height: 140px;
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-    border-radius: 12px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-}
-
-.recipe-card-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 4px;
-}
-
-.recipe-card-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.recipe-rating {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.stars {
-    color: #fbbf24;
-    font-size: 14px;
-}
-
-.rating-text {
-    font-size: 12px;
-    color: var(--gray-500);
-}
-
-.recipe-chips {
-    display: flex;
-    gap: 8px;
-}
-
-.chip {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: transform var(--transition-fast);
-}
-
-.chip:hover {
-    transform: scale(1.05);
-}
-
-.chip-vegan {
-    background: var(--chip-vegan);
-    color: var(--chip-vegan-text);
-}
-
-.chip-quick {
-    background: var(--chip-quick);
-    color: var(--chip-quick-text);
-}
-
-.chip-vegetarian {
-    background: var(--chip-vegetarian);
-    color: var(--chip-vegetarian-text);
-}
-
-.chip-active {
-    background: var(--chip-active);
-    color: var(--chip-active-text);
-}
-
-.recipe-time {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--gray-500);
-}
-
-/* Right Panel - Form Section */
+/* ── Right Panel — Form Section ── */
 .auth-form-panel {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 48px;
+    position: relative;
+    z-index: 1;
 }
 
+/* Auth Card — Apple-style floating card */
 .auth-form-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+.auth-form-container:hover {
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.10);
+    transform: translateY(-1px);
+}
+
+/* ── Auth Header ── */
 .auth-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
 }
 
 .auth-header h1 {
     font-size: 28px;
     font-weight: 700;
-    color: var(--gray-900);
-    margin-bottom: 8px;
+    color: #111111;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
 .auth-header p {
-    font-size: 14px;
-    color: var(--gray-500);
+    font-size: 15px;
+    color: #9CA3AF;
+    font-weight: 400;
+    line-height: 1.5;
 }
 
-.auth-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--gray-900);
-    margin-bottom: 8px;
-}
-
-.auth-subtitle {
-    font-size: 14px;
-    color: var(--gray-500);
-}
-
-/* Tab Switcher */
+/* ── Tab Switcher ── */
 .auth-tabs {
     display: flex;
-    background: var(--gray-100);
+    background: #F3F4F6;
     border-radius: 12px;
     padding: 4px;
     margin-bottom: 24px;
+    gap: 4px;
 }
 
 .auth-tab {
     flex: 1;
-    padding: 12px 24px;
+    padding: 10px 24px;
     border: none;
     background: transparent;
     font-size: 14px;
     font-weight: 500;
-    color: var(--gray-500);
+    color: #9CA3AF;
     cursor: pointer;
     border-radius: 10px;
-    transition: all var(--transition-fast);
+    transition: all 200ms ease;
+    letter-spacing: -0.1px;
 }
 
 .auth-tab:hover {
-    color: var(--gray-700);
+    color: #374151;
 }
 
 .auth-tab.active {
-    background: var(--white);
-    color: var(--primary-teal);
-    box-shadow: var(--shadow-sm);
+    background: #FFFFFF;
+    color: #FF7A18;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    font-weight: 600;
 }
 
-/* Form Styles */
+/* ── Alerts ── */
+.auth-alert {
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.auth-alert-success {
+    background: #ECFDF5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.auth-alert-error {
+    background: #FEF2F2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.auth-alert-warning {
+    background: #FFFBEB;
+    color: #92400E;
+    border: 1px solid #FCD34D;
+}
+
+/* ── Form Styles ── */
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 18px;
 }
 
 .form-group {
@@ -335,204 +298,66 @@
 
 .form-label {
     font-size: 13px;
-    font-weight: 500;
-    color: var(--gray-700);
+    font-weight: 600;
+    color: #374151;
+    letter-spacing: 0.1px;
 }
 
 .form-input {
     width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--gray-200);
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid #E5E7EB;
     border-radius: 10px;
     font-size: 14px;
-    color: var(--gray-900);
-    background: var(--white);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    color: #111111;
+    background: #FFFFFF;
+    transition: all 200ms ease;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.form-input::placeholder {
+    color: #C4C9D2;
+    font-weight: 400;
 }
 
 .form-input:hover {
-    border-color: var(--gray-300);
+    border-color: #D1D5DB;
 }
 
 .form-input:focus {
-    border-color: var(--primary-teal);
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    border-color: #FF7A18;
+    box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.15);
+    outline: none;
 }
 
-.form-select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    font-size: 14px;
-    color: var(--gray-900);
-    background: var(--white);
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    transition: border-color var(--transition-fast);
-}
-
-.form-select:hover {
-    border-color: var(--gray-300);
-}
-
-.form-select:focus {
-    border-color: var(--primary-teal);
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
-}
-
-/* Preference Chips */
-.preference-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.preference-chip {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    border: 2px solid transparent;
-}
-
-.preference-chip.all-recipes {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-}
-
-.preference-chip.all-recipes:hover,
-.preference-chip.all-recipes.selected {
-    background: #ef4444;
-    color: var(--white);
-}
-
-.preference-chip.vegetarian {
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
-}
-
-.preference-chip.vegetarian:hover,
-.preference-chip.vegetarian.selected {
-    background: #22c55e;
-    color: var(--white);
-}
-
-.preference-chip.vegan {
-    background: rgba(20, 184, 166, 0.1);
-    color: #14b8a6;
-}
-
-.preference-chip.vegan:hover,
-.preference-chip.vegan.selected {
-    background: #14b8a6;
-    color: var(--white);
-}
-
-/* Submit Button */
-.submit-btn {
-    width: 100%;
-    padding: 14px 24px;
-    border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--white);
-    background: var(--primary-gradient);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    margin-top: 8px;
-}
-
-.submit-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
-}
-
-.submit-btn:active {
-    transform: translateY(0);
-}
-
-/* Footer Links */
-.auth-footer {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.terms-text {
-    font-size: 12px;
-    color: var(--gray-500);
-    line-height: 1.6;
-}
-
-.terms-text a {
-    color: var(--primary-teal);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.terms-text a:hover {
-    text-decoration: underline;
-}
-
-/* Page Footer */
-.page-footer {
-    position: absolute;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: var(--gray-400);
-}
-
-/* Animations */
-.fade-in {
-    animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Real-time Validation */
+/* ── Input Validation States ── */
 .form-input.is-invalid {
-    border-color: #ef4444;
+    border-color: #F87171;
 }
 
 .form-input.is-invalid:focus {
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
 }
 
 .form-input.is-valid {
-    border-color: #10b981;
+    border-color: #34D399;
 }
 
 .form-input.is-valid:focus {
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
 }
 
 .error-text {
     font-size: 12px;
-    color: #ef4444;
-    margin-top: -2px;
-    margin-bottom: 2px;
+    color: #EF4444;
+    font-weight: 500;
+    margin-top: 0;
 }
 
-/* Password Toggle */
+/* ── Password Toggle ── */
 .password-input-wrapper {
     position: relative;
     display: flex;
@@ -545,20 +370,182 @@
 
 .password-toggle-icon {
     position: absolute;
-    right: 12px;
-    color: var(--gray-500);
+    right: 14px;
+    color: #9CA3AF;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color var(--transition-fast);
+    transition: color 200ms ease;
 }
 
 .password-toggle-icon:hover {
-    color: var(--gray-700);
+    color: #FF7A18;
 }
 
-/* Auth Animations */
+/* ── Preference Chips ── */
+.preference-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.preference-chip {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 200ms ease;
+    border: 1.5px solid transparent;
+}
+
+.preference-chip.all-recipes {
+    background: rgba(255, 122, 24, 0.08);
+    color: #FF7A18;
+    border-color: rgba(255, 122, 24, 0.15);
+}
+
+.preference-chip.all-recipes:hover,
+.preference-chip.all-recipes.selected {
+    background: #FF7A18;
+    color: #FFFFFF;
+    border-color: #FF7A18;
+    transform: translateY(-1px);
+}
+
+.preference-chip.vegetarian {
+    background: rgba(34, 197, 94, 0.08);
+    color: #22C55E;
+    border-color: rgba(34, 197, 94, 0.15);
+}
+
+.preference-chip.vegetarian:hover,
+.preference-chip.vegetarian.selected {
+    background: #22C55E;
+    color: #FFFFFF;
+    border-color: #22C55E;
+    transform: translateY(-1px);
+}
+
+.preference-chip.vegan {
+    background: rgba(20, 184, 166, 0.08);
+    color: #14B8A6;
+    border-color: rgba(20, 184, 166, 0.15);
+}
+
+.preference-chip.vegan:hover,
+.preference-chip.vegan.selected {
+    background: #14B8A6;
+    color: #FFFFFF;
+    border-color: #14B8A6;
+    transform: translateY(-1px);
+}
+
+/* ── Submit Button ── */
+.submit-btn {
+    width: 100%;
+    height: 48px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #FFFFFF;
+    background: #FF7A18;
+    cursor: pointer;
+    transition: all 200ms ease;
+    margin-top: 4px;
+    letter-spacing: -0.1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #FF9F43;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(255, 122, 24, 0.35);
+}
+
+.submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 122, 24, 0.2);
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.submit-btn.error-animation {
+    background: #EF4444;
+}
+
+.submit-btn.success-animation {
+    background: #10B981;
+    transform: scale(0.98);
+}
+
+/* ── Secondary Action Link ── */
+.auth-secondary-action {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.auth-secondary-btn {
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    color: #9CA3AF;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 200ms ease;
+    font-family: inherit;
+}
+
+.auth-secondary-btn:hover {
+    color: #FF7A18;
+}
+
+.auth-secondary-btn .accent {
+    color: #FF7A18;
+    font-weight: 500;
+}
+
+/* ── Project Info Card (override for auth page) ── */
+.auth-form-container .project-info-card {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+}
+
+/* ── Animations ── */
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Shake Animation */
 @keyframes shake {
 
     0%,
@@ -567,19 +554,19 @@
     }
 
     20% {
-        transform: translateX(-10px);
+        transform: translateX(-8px);
     }
 
     40% {
-        transform: translateX(10px);
+        transform: translateX(8px);
     }
 
     60% {
-        transform: translateX(-10px);
+        transform: translateX(-8px);
     }
 
     80% {
-        transform: translateX(10px);
+        transform: translateX(8px);
     }
 }
 
@@ -587,91 +574,175 @@
     animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
 }
 
-.submit-btn.error-animation {
-    background: #ef4444;
+/* ── Legacy compat (used in other places) ── */
+.brand-text {
+    margin-top: 48px;
+    text-align: center;
 }
 
-.submit-btn.success-animation {
-    background: #10b981;
-    transform: scale(0.98);
+.brand-text h2 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 16px;
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-    .auth-brand-panel {
-        padding: 32px;
-    }
-
-    .logo-image {
-        max-width: 220px;
-    }
-
-    .brand-text h2 {
-        font-size: 36px;
-    }
+.brand-text p {
+    font-size: 16px;
+    opacity: 0.9;
 }
 
+.stars {
+    color: #FF7A18;
+    font-size: 14px;
+}
+
+.chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 150ms ease;
+}
+
+.chip:hover {
+    transform: scale(1.05);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #111111;
+    background: #FFFFFF;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.form-select:focus {
+    border-color: #FF7A18;
+    box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.15);
+}
+
+/* =============== RESPONSIVE =============== */
+
+/* Tablet */
 @media (max-width: 1024px) {
     .auth-page {
         grid-template-columns: 1fr;
         overflow-y: auto;
     }
 
+    .auth-page::before {
+        top: 10%;
+        left: 50%;
+    }
+
     .auth-brand-panel {
-        padding: 40px 24px;
+        padding: 48px 24px 32px;
         min-height: auto;
     }
 
     .brand-content {
-        display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 24px;
+        gap: 12px;
     }
 
     .brand-logo {
-        margin-bottom: 0;
+        margin-bottom: 16px;
     }
 
     .logo-image {
-        max-width: 180px;
+        width: 160px;
+    }
+
+    .brand-tagline {
+        font-size: 24px;
+    }
+
+    .brand-description {
+        font-size: 14px;
     }
 
     .recipe-card-preview {
         display: none;
-        /* Hide preview on tablet/mobile brand header to save space */
-    }
-
-    .brand-text {
-        margin-top: 0;
-    }
-
-    .brand-text h2 {
-        font-size: 28px;
     }
 
     .auth-form-panel {
-        padding: 40px 24px;
+        padding: 24px;
         min-height: auto;
+    }
+
+    .auth-form-container {
+        max-width: 460px;
     }
 }
 
-@media (max-width: 480px) {
+/* Mobile */
+@media (max-width: 640px) {
+    .auth-brand-panel {
+        padding: 36px 20px 24px;
+    }
+
+    .logo-image {
+        width: 140px;
+    }
+
+    .brand-tagline {
+        font-size: 22px;
+    }
+
+    .brand-description {
+        font-size: 13px;
+        max-width: 260px;
+    }
+
+    .auth-form-panel {
+        padding: 20px 16px 40px;
+    }
+
     .auth-form-container {
         max-width: 100%;
+        padding: 28px 24px;
+        border-radius: 16px;
     }
 
     .auth-header h1 {
         font-size: 24px;
     }
 
+    .auth-header p {
+        font-size: 14px;
+    }
+
+    .auth-tab {
+        padding: 9px 16px;
+        font-size: 13px;
+    }
+
     .form-row {
         grid-template-columns: 1fr;
         gap: 0;
     }
+}
 
-    .auth-tab {
-        padding: 10px 16px;
-        font-size: 13px;
+/* Small mobile */
+@media (max-width: 380px) {
+    .auth-form-container {
+        padding: 24px 18px;
+    }
+
+    .submit-btn {
+        height: 44px;
+        font-size: 14px;
     }
 }
