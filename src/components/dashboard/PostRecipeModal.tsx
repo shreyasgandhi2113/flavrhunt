@@ -77,173 +77,241 @@ export const PostRecipeModal: React.FC<PostRecipeModalProps> = ({ onClose, initi
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>{initialData ? 'Edit Recipe' : 'Post New Recipe'}</h2>
+                <div style={{ marginBottom: '32px' }}>
+                    <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>
+                        {initialData ? 'Edit Recipe' : 'Post New Recipe'}
+                    </h2>
+                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-secondary)' }}>
+                        Share your recipe with the community
+                    </p>
+                </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                    {/* BASIC INFORMATION */}
                     <div>
-                        <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Recipe Title</label>
-                        <input
-                            type="text"
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            placeholder="e.g. Mac and Cheese"
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '14px' }}
-                            required
-                        />
-                    </div>
+                        <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--text-primary)' }}>BASIC INFORMATION</h3>
+                        <div className="modal-divider"></div>
 
-                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Recipe Type</label>
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', cursor: 'pointer' }}>
-                                    <input
-                                        type="radio"
-                                        name="type"
-                                        value="Veg"
-                                        checked={formData.type === 'Veg'}
-                                        onChange={handleChange}
-                                    />
-                                    Veg
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', cursor: 'pointer' }}>
-                                    <input
-                                        type="radio"
-                                        name="type"
-                                        value="Vegan"
-                                        checked={formData.type === 'Vegan'}
-                                        onChange={handleChange}
-                                    />
-                                    Vegan
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', cursor: 'pointer' }}>
-                                    <input
-                                        type="radio"
-                                        name="type"
-                                        value="Non-Veg"
-                                        checked={formData.type === 'Non-Veg'}
-                                        onChange={handleChange}
-                                    />
-                                    Non-Veg
-                                </label>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-primary)' }}>Recipe Title</label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Mac and Cheese"
+                                    className="modal-input"
+                                    required
+                                />
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--text-primary)' }}>Recipe Type</label>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        {['Veg', 'Vegan', 'Non-Veg'].map(type => (
+                                            <button
+                                                key={type}
+                                                type="button"
+                                                className="type-pill"
+                                                onClick={() => setFormData({ ...formData, type })}
+                                                style={{
+                                                    background: formData.type === type ? 'var(--primary-accent)' : '#F3F4F6',
+                                                    color: formData.type === type ? 'white' : '#374151',
+                                                }}
+                                            >
+                                                {type}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-primary)' }}>Cover Image</label>
+                                    <label className="upload-card">
+                                        {formData.image && formData.image.startsWith('data:') ? (
+                                            <img src={formData.image} alt="Preview" style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
+                                        ) : (
+                                            <>
+                                                <span style={{ fontSize: '24px', marginBottom: '8px' }}>📷</span>
+                                                <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Drag image here or click to upload</span>
+                                            </>
+                                        )}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Cover Image</label>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                {formData.image && formData.image.startsWith('data:') ? (
-                                    <img src={formData.image} alt="Preview" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '8px' }} />
-                                ) : (
-                                    <span style={{ fontSize: '24px' }}>{formData.image || '📷'}</span>
-                                )}
+                    {/* RECIPE DETAILS */}
+                    <div>
+                        <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--text-primary)' }}>RECIPE DETAILS</h3>
+                        <div className="modal-divider"></div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--text-primary)' }}>Category Tags</label>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {CATEGORIES.map(tag => (
+                                        <button
+                                            key={tag}
+                                            type="button"
+                                            onClick={() => toggleTag(tag)}
+                                            style={{
+                                                padding: '6px 12px',
+                                                borderRadius: '16px',
+                                                border: 'none',
+                                                background: selectedTags.includes(tag) ? 'var(--primary-accent)' : '#F3F4F6',
+                                                color: selectedTags.includes(tag) ? 'white' : '#374151',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                fontWeight: 500,
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                        >
+                                            {tag}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Cooking Time</label>
+                                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>Enter cooking time in minutes.</div>
                                 <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    style={{ fontSize: '12px' }}
+                                    type="number"
+                                    name="time"
+                                    value={formData.time}
+                                    onChange={handleChange}
+                                    className="modal-input"
+                                />
+                            </div>
+
+                            <div>
+                                <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Short Description</label>
+                                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>Write a short description of the recipe.</div>
+                                <textarea
+                                    name="info"
+                                    value={formData.info}
+                                    onChange={handleChange}
+                                    placeholder="Describe your dish..."
+                                    className="modal-input"
+                                    style={{ height: '80px' }}
                                 />
                             </div>
                         </div>
                     </div>
 
+                    {/* INGREDIENTS */}
                     <div>
-                        <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Category Tags</label>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                            {CATEGORIES.map(tag => (
-                                <button
-                                    key={tag}
-                                    type="button"
-                                    onClick={() => toggleTag(tag)}
-                                    style={{
-                                        padding: '6px 16px',
-                                        borderRadius: '99px',
-                                        border: '1px solid',
-                                        borderColor: selectedTags.includes(tag) ? '#111827' : '#e5e7eb',
-                                        background: selectedTags.includes(tag) ? '#111827' : 'white',
-                                        color: selectedTags.includes(tag) ? 'white' : '#4b5563',
-                                        cursor: 'pointer',
-                                        fontSize: '13px'
-                                    }}
-                                >
-                                    {tag}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                        <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--text-primary)' }}>INGREDIENTS</h3>
+                        <div className="modal-divider"></div>
 
-                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Time (mins)</label>
-                            <input
-                                type="number"
-                                name="time"
-                                value={formData.time}
+                        <div>
+                            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Ingredients list</label>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                                Ingredients (One per line)<br />
+                                Example:<br />
+                                1 cup pasta<br />
+                                200g cheese<br />
+                                1 tbsp olive oil
+                            </div>
+                            <textarea
+                                name="ingredients"
+                                value={formData.ingredients}
                                 onChange={handleChange}
-                                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb' }}
+                                placeholder="1 cup pasta&#10;200g cheese"
+                                className="modal-input"
+                                style={{ height: '120px' }}
+                                required
                             />
                         </div>
                     </div>
 
+                    {/* PREPARATION */}
                     <div>
-                        <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Short Info</label>
-                        <textarea
-                            name="info"
-                            value={formData.info}
-                            onChange={handleChange}
-                            placeholder="Describe your dish..."
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', height: '60px' }}
-                        />
+                        <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--text-primary)' }}>PREPARATION</h3>
+                        <div className="modal-divider"></div>
+
+                        <div>
+                            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Preparation steps</label>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>Write each step on a new line.</div>
+                            <textarea
+                                name="process"
+                                value={formData.process}
+                                onChange={handleChange}
+                                placeholder="Step 1: Boil water&#10;Step 2: Add pasta"
+                                className="modal-input"
+                                style={{ height: '140px' }}
+                                required
+                            />
+                        </div>
                     </div>
 
+                    {/* TIPS */}
                     <div>
-                        <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Ingredients (One per line)</label>
-                        <textarea
-                            name="ingredients"
-                            value={formData.ingredients}
-                            onChange={handleChange}
-                            placeholder="1 cup Pasta&#10;200g Cheese"
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', height: '100px' }}
-                            required
-                        />
+                        <h3 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--text-primary)' }}>TIPS</h3>
+                        <div className="modal-divider"></div>
+
+                        <div>
+                            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: 'var(--text-primary)' }}>Important Tips</label>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>Optional advice for better results.</div>
+                            <textarea
+                                name="tips"
+                                value={formData.tips}
+                                onChange={handleChange}
+                                placeholder="Example:&#10;Use salted butter for better flavor."
+                                className="modal-input"
+                                style={{ height: '100px' }}
+                            />
+                        </div>
                     </div>
 
-                    <div>
-                        <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Preparation Process</label>
-                        <textarea
-                            name="process"
-                            value={formData.process}
-                            onChange={handleChange}
-                            placeholder="Step 1: Boil water..."
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', height: '120px' }}
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Important Tips</label>
-                        <textarea
-                            name="tips"
-                            value={formData.tips}
-                            onChange={handleChange}
-                            placeholder="Use salted butter for..."
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', height: '80px' }}
-                        />
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '16px', marginTop: '16px', justifyContent: 'flex-end' }}>
                         <button
                             type="button"
                             onClick={onClose}
-                            style={{ flex: 1, padding: '14px', borderRadius: '99px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer' }}
+                            style={{
+                                padding: '10px 20px',
+                                borderRadius: '10px',
+                                border: '1px solid var(--border-color)',
+                                background: 'transparent',
+                                color: 'var(--text-primary)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="post-btn"
-                            style={{ flex: 1, justifyContent: 'center' }}
+                            style={{
+                                padding: '10px 24px',
+                                borderRadius: '10px',
+                                border: 'none',
+                                background: 'var(--primary-accent)',
+                                color: 'white',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.background = 'var(--secondary-accent)';
+                                e.currentTarget.style.transform = 'translateY(-1px)';
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.background = 'var(--primary-accent)';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                            }}
                         >
                             {initialData ? 'Save Changes' : 'Post Recipe'}
                         </button>
