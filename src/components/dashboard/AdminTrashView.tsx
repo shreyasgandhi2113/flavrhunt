@@ -86,21 +86,28 @@ export const AdminTrashView: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: '24px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ margin: '0 0 24px 0' }}>Trash Bin</h2>
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 600, color: '#111111' }}>Trash Bin</h2>
+            </div>
+
+            <div style={{ display: 'inline-flex', background: '#F3F4F6', padding: '4px', borderRadius: '12px', width: 'fit-content' }}>
                 {(['recipes', 'users', 'comments'] as const).map(v => (
                     <button
                         key={v}
                         onClick={() => setViewData(v)}
                         style={{
-                            padding: '8px 16px',
-                            background: viewData === v ? '#3b82f6' : '#e5e7eb',
-                            color: viewData === v ? 'white' : 'black',
+                            padding: '8px 20px',
+                            background: viewData === v ? '#FFFFFF' : 'transparent',
+                            color: viewData === v ? '#111111' : '#6B7280',
                             border: 'none',
                             borderRadius: '8px',
                             cursor: 'pointer',
-                            textTransform: 'capitalize'
+                            textTransform: 'capitalize',
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            transition: 'all 0.2s ease',
+                            boxShadow: viewData === v ? '0 2px 4px rgba(0,0,0,0.04)' : 'none'
                         }}
                     >
                         Deleted {v}
@@ -109,44 +116,101 @@ export const AdminTrashView: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {viewData === 'recipes' && deletedRecipes.length === 0 && <p style={{ color: '#6b7280' }}>No recipes in trash.</p>}
+                {viewData === 'recipes' && deletedRecipes.length === 0 && (
+                    <div style={{ padding: '40px', textAlign: 'center', background: '#F9FAFB', borderRadius: '16px', border: '1px dashed #E5E7EB' }}>
+                        <div style={{ fontSize: '32px', marginBottom: '12px' }}>🍳</div>
+                        <p style={{ color: '#6B7280', margin: 0, fontSize: '15px' }}>No recipes in trash.</p>
+                    </div>
+                )}
                 {viewData === 'recipes' && deletedRecipes.map(r => (
-                    <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f9fafb', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                    <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '20px', borderRadius: '16px', border: '1px solid #E5E7EB', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', transition: 'transform 0.2s ease' }}>
                         <div>
-                            <h3 style={{ margin: '0 0 4px 0' }}>{r.title}</h3>
-                            <span style={{ fontSize: '14px', color: '#6b7280' }}>By: @{r.hostName}</span>
+                            <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 600, color: '#111111' }}>{r.title}</h3>
+                            <span style={{ fontSize: '14px', color: '#6B7280' }}>By: @{r.hostName}</span>
                         </div>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                            <button onClick={() => handleRestoreRecipe(r.id, r.title)} style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Restore</button>
-                            <button onClick={() => handlePermDeleteRecipe(r.id, r.title)} style={{ padding: '8px 16px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete Permanently</button>
+                            <button
+                                onClick={() => handleRestoreRecipe(r.id, r.title)}
+                                style={{ padding: '8px 16px', background: '#DCFCE7', color: '#166534', border: '1px solid #BBF7D0', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, transition: 'all 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#BBF7D0'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#DCFCE7'}
+                            >
+                                Restore
+                            </button>
+                            <button
+                                onClick={() => handlePermDeleteRecipe(r.id, r.title)}
+                                style={{ padding: '8px 16px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FEE2E2', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, transition: 'all 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
+                            >
+                                Delete Permanently
+                            </button>
                         </div>
                     </div>
                 ))}
 
-                {viewData === 'users' && deletedUsers.length === 0 && <p style={{ color: '#6b7280' }}>No users in trash.</p>}
+                {viewData === 'users' && deletedUsers.length === 0 && (
+                    <div style={{ padding: '40px', textAlign: 'center', background: '#F9FAFB', borderRadius: '16px', border: '1px dashed #E5E7EB' }}>
+                        <div style={{ fontSize: '32px', marginBottom: '12px' }}>👥</div>
+                        <p style={{ color: '#6B7280', margin: 0, fontSize: '15px' }}>No users in trash.</p>
+                    </div>
+                )}
                 {viewData === 'users' && deletedUsers.map(u => (
-                    <div key={u.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f9fafb', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                    <div key={u.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '20px', borderRadius: '16px', border: '1px solid #E5E7EB', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', transition: 'transform 0.2s ease' }}>
                         <div>
-                            <h3 style={{ margin: '0 0 4px 0' }}>@{u.username}</h3>
-                            <span style={{ fontSize: '14px', color: '#6b7280' }}>{u.email}</span>
+                            <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 600, color: '#111111' }}>@{u.username}</h3>
+                            <span style={{ fontSize: '14px', color: '#6B7280' }}>{u.email}</span>
                         </div>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                            <button onClick={() => handleRestoreUser(u.id, u.username)} style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Restore</button>
-                            <button onClick={() => handlePermDeleteUser(u.id, u.username)} style={{ padding: '8px 16px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete Permanently</button>
+                            <button
+                                onClick={() => handleRestoreUser(u.id, u.username)}
+                                style={{ padding: '8px 16px', background: '#DCFCE7', color: '#166534', border: '1px solid #BBF7D0', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, transition: 'all 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#BBF7D0'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#DCFCE7'}
+                            >
+                                Restore
+                            </button>
+                            <button
+                                onClick={() => handlePermDeleteUser(u.id, u.username)}
+                                style={{ padding: '8px 16px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FEE2E2', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, transition: 'all 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
+                            >
+                                Delete Permanently
+                            </button>
                         </div>
                     </div>
                 ))}
 
-                {viewData === 'comments' && deletedComments.length === 0 && <p style={{ color: '#6b7280' }}>No comments in trash.</p>}
+                {viewData === 'comments' && deletedComments.length === 0 && (
+                    <div style={{ padding: '40px', textAlign: 'center', background: '#F9FAFB', borderRadius: '16px', border: '1px dashed #E5E7EB' }}>
+                        <div style={{ fontSize: '32px', marginBottom: '12px' }}>💬</div>
+                        <p style={{ color: '#6B7280', margin: 0, fontSize: '15px' }}>No comments in trash.</p>
+                    </div>
+                )}
                 {viewData === 'comments' && deletedComments.map(c => (
-                    <div key={c.commentId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f9fafb', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                    <div key={c.commentId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '20px', borderRadius: '16px', border: '1px solid #E5E7EB', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', transition: 'transform 0.2s ease' }}>
                         <div>
-                            <p style={{ margin: '0 0 4px 0', fontWeight: 'bold' }}>"{c.text}"</p>
-                            <span style={{ fontSize: '14px', color: '#6b7280' }}>By: @{c.username}</span>
+                            <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 500, color: '#111111' }}>"{c.text}"</p>
+                            <span style={{ fontSize: '14px', color: '#6B7280' }}>By: @{c.username}</span>
                         </div>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                            <button onClick={() => handleRestoreComment(c.commentId, c.text)} style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Restore</button>
-                            <button onClick={() => handlePermDeleteComment(c.commentId, c.text)} style={{ padding: '8px 16px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete Permanently</button>
+                            <button
+                                onClick={() => handleRestoreComment(c.commentId, c.text)}
+                                style={{ padding: '8px 16px', background: '#DCFCE7', color: '#166534', border: '1px solid #BBF7D0', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, transition: 'all 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#BBF7D0'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#DCFCE7'}
+                            >
+                                Restore
+                            </button>
+                            <button
+                                onClick={() => handlePermDeleteComment(c.commentId, c.text)}
+                                style={{ padding: '8px 16px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FEE2E2', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, transition: 'all 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
+                            >
+                                Delete Permanently
+                            </button>
                         </div>
                     </div>
                 ))}

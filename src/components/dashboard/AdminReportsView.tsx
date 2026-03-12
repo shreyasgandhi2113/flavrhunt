@@ -87,61 +87,146 @@ export const AdminReportsView: React.FC<AdminReportsViewProps> = ({ onNavigateTo
     };
 
     return (
-        <div style={{ padding: '24px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ margin: '0 0 24px 0' }}>Reports</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 600, color: '#111111' }}>Reports Management</h2>
+            </div>
 
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                        <tr style={{ borderBottom: '2px solid #e5e7eb', color: '#6b7280' }}>
-                            <th style={{ padding: '12px' }}>Type</th>
-                            <th style={{ padding: '12px' }}>Target</th>
-                            <th style={{ padding: '12px' }}>Reported By</th>
-                            <th style={{ padding: '12px' }}>Reason</th>
-                            <th style={{ padding: '12px' }}>Timestamp</th>
-                            <th style={{ padding: '12px' }}>Status</th>
-                            <th style={{ padding: '12px' }}>Actions</th>
+                    <thead style={{ background: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
+                        <tr>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Type</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Target</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Reported By</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Reason</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Timestamp</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Status</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280', textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {reports.map((rep: Report) => (
-                            <tr key={rep.reportId} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                <td style={{ padding: '12px', textTransform: 'capitalize' }}>{rep.reportType}</td>
-                                <td style={{ padding: '12px' }}>{rep.targetName}</td>
-                                <td style={{ padding: '12px' }}>@{rep.reportedByUser}</td>
-                                <td style={{ padding: '12px', maxWidth: '200px', wordWrap: 'break-word' }}>{rep.reason}</td>
-                                <td style={{ padding: '12px', color: '#6b7280' }}>
-                                    {new Date(rep.timestamp).toLocaleDateString()} {new Date(rep.timestamp).toLocaleTimeString()}
+                            <tr
+                                key={rep.reportId}
+                                style={{ borderBottom: '1px solid #E5E7EB', height: '64px', transition: 'background 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#F9FAFB'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            >
+                                <td style={{ padding: '0 16px', textTransform: 'capitalize', fontSize: '14px', fontWeight: 500, color: '#111111' }}>
+                                    {rep.reportType === 'user' ? '👤 ' : rep.reportType === 'recipe' ? '🍳 ' : '💬 '}
+                                    {rep.reportType}
                                 </td>
-                                <td style={{ padding: '12px' }}>
-                                    <span style={{
-                                        padding: '4px 8px', borderRadius: '999px', fontSize: '12px', fontWeight: 'bold',
-                                        background: rep.status === 'pending' ? '#fef3c7' : '#d1fae5',
-                                        color: rep.status === 'pending' ? '#d97706' : '#059669'
+                                <td style={{ padding: '0 16px', fontSize: '14px', color: '#4B5563', fontWeight: 500 }}>
+                                    {rep.targetName}
+                                </td>
+                                <td style={{ padding: '0 16px' }}>
+                                    <div style={{
+                                        display: 'inline-block',
+                                        background: '#F3F4F6',
+                                        color: '#374151',
+                                        padding: '4px 10px',
+                                        borderRadius: '6px',
+                                        fontSize: '13px',
+                                        fontWeight: 500
                                     }}>
-                                        {rep.status}
+                                        @{rep.reportedByUser}
+                                    </div>
+                                </td>
+                                <td style={{ padding: '0 16px', maxWidth: '200px', wordWrap: 'break-word', fontSize: '14px', color: '#111111' }}>
+                                    "{rep.reason}"
+                                </td>
+                                <td style={{ padding: '0 16px', color: '#6B7280', fontSize: '13px' }}>
+                                    {new Date(rep.timestamp).toLocaleDateString()} {new Date(rep.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </td>
+                                <td style={{ padding: '0 16px' }}>
+                                    <span style={{
+                                        padding: '4px 10px',
+                                        borderRadius: '12px',
+                                        fontSize: '12px',
+                                        fontWeight: 500,
+                                        background: rep.status === 'pending' ? '#FEF3C7' : '#DCFCE7',
+                                        color: rep.status === 'pending' ? '#92400E' : '#166534'
+                                    }}>
+                                        {rep.status === 'pending' ? 'Pending' : 'Resolved'}
                                     </span>
                                 </td>
-                                <td style={{ padding: '12px', display: 'flex', gap: '8px' }}>
-                                    <button onClick={() => handleViewTarget(rep)} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
-                                        View
-                                    </button>
-                                    {(isSuper || (rep.reportType === 'user' && p?.deleteUsers) || (rep.reportType === 'recipe' && p?.deleteRecipes) || (rep.reportType === 'comment' && p?.deleteComments)) && (
-                                        <button onClick={() => handleDeleteTarget(rep)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
-                                            Delete
+                                <td style={{ padding: '0 16px', textAlign: 'right' }}>
+                                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                        <button
+                                            onClick={() => handleViewTarget(rep)}
+                                            style={{
+                                                background: 'transparent',
+                                                color: '#111111',
+                                                border: '1px solid #E5E7EB',
+                                                padding: '6px 12px',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                fontWeight: 500,
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                            onMouseEnter={e => {
+                                                e.currentTarget.style.borderColor = '#FF7A18';
+                                                e.currentTarget.style.color = '#FF7A18';
+                                            }}
+                                            onMouseLeave={e => {
+                                                e.currentTarget.style.borderColor = '#E5E7EB';
+                                                e.currentTarget.style.color = '#111111';
+                                            }}
+                                        >
+                                            View
                                         </button>
-                                    )}
-                                    {rep.status === 'pending' && (
-                                        <button onClick={() => handleMarkResolved(rep)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
-                                            Resolve
-                                        </button>
-                                    )}
+
+                                        {rep.status === 'pending' && (
+                                            <button
+                                                onClick={() => handleMarkResolved(rep)}
+                                                style={{
+                                                    background: '#DCFCE7',
+                                                    color: '#166534',
+                                                    border: '1px solid #BBF7D0',
+                                                    padding: '6px 12px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '12px',
+                                                    fontWeight: 500,
+                                                    transition: 'all 0.2s ease'
+                                                }}
+                                                onMouseEnter={e => e.currentTarget.style.background = '#BBF7D0'}
+                                                onMouseLeave={e => e.currentTarget.style.background = '#DCFCE7'}
+                                            >
+                                                Resolve
+                                            </button>
+                                        )}
+
+                                        {(isSuper || (rep.reportType === 'user' && p?.deleteUsers) || (rep.reportType === 'recipe' && p?.deleteRecipes) || (rep.reportType === 'comment' && p?.deleteComments)) && (
+                                            <button
+                                                onClick={() => handleDeleteTarget(rep)}
+                                                style={{
+                                                    background: '#FEF2F2',
+                                                    color: '#EF4444',
+                                                    border: '1px solid #FEE2E2',
+                                                    padding: '6px 12px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '12px',
+                                                    fontWeight: 500,
+                                                    transition: 'all 0.2s ease'
+                                                }}
+                                                onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
+                                                onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
+                                            >
+                                                Delete Target
+                                            </button>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
                         {reports.length === 0 && (
                             <tr>
-                                <td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>
+                                <td colSpan={7} style={{ padding: '32px', textAlign: 'center', color: '#6B7280', fontSize: '14px' }}>
+                                    <div style={{ fontSize: '24px', marginBottom: '8px' }}>🚩</div>
                                     No reports found.
                                 </td>
                             </tr>

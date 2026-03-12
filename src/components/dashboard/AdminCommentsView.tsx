@@ -65,50 +65,122 @@ export const AdminCommentsView: React.FC<AdminCommentsViewProps> = ({ onNavigate
     };
 
     return (
-        <div style={{ padding: '24px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h2 style={{ margin: 0 }}>Comments Moderation</h2>
-                <input
-                    type="text"
-                    placeholder="Search by username, thought, or recipe..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #d1d5db', width: '300px' }}
-                />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '14px' }}>🔍</span>
+                    <input
+                        type="text"
+                        placeholder="Search comments..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        style={{
+                            height: '44px',
+                            padding: '0 16px 0 44px',
+                            borderRadius: '10px',
+                            border: '1px solid #E5E7EB',
+                            background: '#FFFFFF',
+                            fontSize: '14px',
+                            outline: 'none',
+                            width: '320px',
+                            transition: 'all 0.2s ease',
+                            color: '#111111'
+                        }}
+                        onFocus={e => {
+                            e.currentTarget.style.borderColor = '#FF7A18';
+                            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(255,122,24,0.15)';
+                        }}
+                        onBlur={e => {
+                            e.currentTarget.style.borderColor = '#E5E7EB';
+                            e.currentTarget.style.boxShadow = 'none';
+                        }}
+                    />
+                </div>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                        <tr style={{ borderBottom: '2px solid #e5e7eb', color: '#6b7280' }}>
-                            <th style={{ padding: '12px' }}>Comment</th>
-                            <th style={{ padding: '12px' }}>User</th>
-                            <th style={{ padding: '12px' }}>Recipe</th>
-                            <th style={{ padding: '12px' }}>Timestamp</th>
-                            <th style={{ padding: '12px' }}>Actions</th>
+                    <thead style={{ background: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
+                        <tr>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Comment</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>User</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Recipe</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>Timestamp</th>
+                            <th style={{ padding: '16px', fontSize: '13px', fontWeight: 600, color: '#6B7280', textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredComments.map(c => (
-                            <tr key={c.commentId} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                <td style={{ padding: '12px', maxWidth: '300px', wordWrap: 'break-word' }}>"{c.text}"</td>
-                                <td style={{ padding: '12px' }}>
-                                    <button onClick={() => onNavigateToUser(c.userId)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', padding: 0 }}>
+                            <tr
+                                key={c.commentId}
+                                style={{ borderBottom: '1px solid #E5E7EB', height: '64px', transition: 'background 0.2s ease' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#FFF7F2'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            >
+                                <td style={{ padding: '0 16px', maxWidth: '300px', wordWrap: 'break-word', fontSize: '14px', color: '#111111' }}>
+                                    "{c.text}"
+                                </td>
+                                <td style={{ padding: '0 16px' }}>
+                                    <button
+                                        onClick={() => onNavigateToUser(c.userId)}
+                                        style={{
+                                            background: '#F3F4F6',
+                                            border: 'none',
+                                            color: '#374151',
+                                            padding: '4px 10px',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '13px',
+                                            fontWeight: 500,
+                                            transition: 'background 0.2s ease'
+                                        }}
+                                        onMouseEnter={e => e.currentTarget.style.background = '#E5E7EB'}
+                                        onMouseLeave={e => e.currentTarget.style.background = '#F3F4F6'}
+                                    >
                                         @{c.username}
                                     </button>
                                 </td>
-                                <td style={{ padding: '12px' }}>
-                                    <button onClick={() => onNavigateToRecipe(c.recipeId)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', padding: 0 }}>
+                                <td style={{ padding: '0 16px' }}>
+                                    <button
+                                        onClick={() => onNavigateToRecipe(c.recipeId)}
+                                        style={{
+                                            background: 'transparent',
+                                            border: 'none',
+                                            color: '#6B7280',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: 500,
+                                            transition: 'color 0.2s ease',
+                                            textDecoration: 'underline'
+                                        }}
+                                        onMouseEnter={e => e.currentTarget.style.color = '#111111'}
+                                        onMouseLeave={e => e.currentTarget.style.color = '#6B7280'}
+                                    >
                                         {recipes.find(r => r.id === c.recipeId)?.title || 'Unknown Recipe'}
                                     </button>
                                 </td>
-                                <td style={{ padding: '12px', color: '#6b7280' }}>
-                                    {new Date(c.createdAt).toLocaleDateString()} {new Date(c.createdAt).toLocaleTimeString()}
+                                <td style={{ padding: '0 16px', fontSize: '13px', color: '#6B7280' }}>
+                                    {new Date(c.createdAt).toLocaleDateString()} {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </td>
-                                <td style={{ padding: '12px' }}>
+                                <td style={{ padding: '0 16px', textAlign: 'right' }}>
                                     {canDelete && (
-                                        <button onClick={() => handleDeleteComment(c.commentId, c.text)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>
-                                            Delete Comment
+                                        <button
+                                            onClick={() => handleDeleteComment(c.commentId, c.text)}
+                                            style={{
+                                                background: '#FEF2F2',
+                                                color: '#EF4444',
+                                                border: '1px solid #FEE2E2',
+                                                padding: '6px 12px',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                fontWeight: 500,
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                            onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
+                                            onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
+                                        >
+                                            Delete
                                         </button>
                                     )}
                                 </td>
@@ -116,8 +188,9 @@ export const AdminCommentsView: React.FC<AdminCommentsViewProps> = ({ onNavigate
                         ))}
                         {filteredComments.length === 0 && (
                             <tr>
-                                <td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>
-                                    No comments found.
+                                <td colSpan={5} style={{ padding: '32px', textAlign: 'center', color: '#6B7280', fontSize: '14px' }}>
+                                    <div style={{ fontSize: '24px', marginBottom: '8px' }}>💬</div>
+                                    No comments found matching your search.
                                 </td>
                             </tr>
                         )}
