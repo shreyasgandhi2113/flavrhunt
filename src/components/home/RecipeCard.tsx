@@ -4,7 +4,7 @@ import type { Recipe } from '../../types';
 
 interface RecipeCardProps {
     recipe: Recipe;
-    variant?: 'hero' | 'standard' | 'compact';
+    variant?: 'hero' | 'standard' | 'compact' | 'dashboard';
 
     onClick?: (id: string) => void;
     onEdit?: (recipe: Recipe) => void;
@@ -103,6 +103,118 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
         color: '#6b7280',
         fontWeight: 500,
     };
+
+    if (variant === 'dashboard') {
+        return (
+            <div
+                className="recipe-card dashboard-card"
+                onClick={() => onClick?.(recipe.id)}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                style={{
+                    background: 'var(--card-bg, #FFFFFF)',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    boxShadow: isHovered ? '0 12px 30px rgba(0,0,0,0.12)' : '0 6px 20px rgba(0,0,0,0.08)',
+                    transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: 0
+                }}
+            >
+                <div style={{ width: '100%', height: '240px', overflow: 'hidden', position: 'relative' }}>
+                    <div
+                        onDoubleClick={(e) => {
+                            e.stopPropagation();
+                            if (currentUser && !currentUser.likedRecipes.includes(recipe.id)) {
+                                toggleLike(recipe.id);
+                                setShowHeart(true);
+                                setTimeout(() => setShowHeart(false), 500);
+                            }
+                        }}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            background: isUrl ? `url("${recipe.image}")` : recipe.image,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '48px',
+                            transition: 'transform 0.2s ease',
+                            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                        }}
+                    >
+                        <div style={{ transition: 'transform 0.5s ease', opacity: isUrl && isHovered ? 0 : 1 }}>
+                            {!isUrl && (recipe.tags.includes('Vegan') ? '🥗' :
+                                recipe.tags.includes('Sweet') ? '🍓' :
+                                    recipe.tags.includes('Pasta') ? '🍝' :
+                                        recipe.tags.includes('Fish') ? '🐟' : '🥘')}
+                        </div>
+                    </div>
+                    {/* Heart Burst Animation Overlay */}
+                    {showHeart && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            fontSize: '64px',
+                            color: '#ef4444',
+                            animation: 'heartBurst 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both',
+                            zIndex: 10,
+                            pointerEvents: 'none'
+                        }}>
+                            ❤️
+                        </div>
+                    )}
+                </div>
+
+                <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    {recipe.tags && recipe.tags.length > 0 && (
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                            {recipe.tags.slice(0, 2).map(tag => (
+                                <span key={tag} style={{
+                                    background: 'var(--tag-bg, #FFF3E8)',
+                                    color: 'var(--primary-accent)',
+                                    borderRadius: '12px',
+                                    padding: '4px 10px',
+                                    fontSize: '12px',
+                                    fontWeight: 500
+                                }}>
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                    <h3 style={{
+                        fontSize: '18px',
+                        fontWeight: 600,
+                        color: 'var(--text-primary)',
+                        margin: '0 0 8px 0',
+                        lineHeight: 1.3
+                    }}>
+                        {recipe.title}
+                    </h3>
+                    <p style={{
+                        fontSize: '14px',
+                        color: 'var(--text-secondary)',
+                        margin: 0,
+                        lineHeight: 1.5,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                    }}>
+                        {recipe.info}
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div

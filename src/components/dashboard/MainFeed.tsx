@@ -113,11 +113,11 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
             {/* Feature 1: Welcome Header */}
             {view === 'feed' && currentUser && (
                 <div className="smart-welcome-header fade-up-animation">
-                    <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: '0 0 4px 0', color: 'inherit' }}>
-                        {getGreeting()}, {currentUser.username}
+                    <h2 style={{ fontSize: '32px', fontWeight: 'bold', margin: '0 0 8px 0', color: 'inherit' }}>
+                        {getGreeting()}, {currentUser.fullName.split(' ')[0]}
                     </h2>
-                    <p style={{ margin: 0, color: isDarkMode ? '#9ca3af' : '#6b7280', fontSize: '15px' }}>
-                        Ready to cook something delicious today?
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '16px' }}>
+                        Discover recipes from the community
                     </p>
                 </div>
             )}
@@ -129,7 +129,7 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
                             view === 'liked' ? 'Liked Recipes' :
                                 view === 'watchLater' ? 'Watch Later' : 'My Recipes'}
                     </h1>
-                    <p style={{ color: '#6b7280', margin: '4px 0 0 0' }}>
+                    <p style={{ color: 'var(--text-secondary)', margin: '4px 0 0 0', fontSize: '14px' }}>
                         {filteredRecipes.length} recipes found
                     </p>
                 </div>
@@ -158,13 +158,16 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
                     style={{
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: isDarkMode ? '1px solid #374151' : '1px solid #d1d5db',
-                        background: isDarkMode ? '#1f2937' : '#ffffff',
-                        color: isDarkMode ? '#f9fafb' : '#111827',
+                        padding: '10px 16px',
+                        borderRadius: '12px',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--card-bg)',
+                        color: 'var(--text-primary)',
                         outline: 'none',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
                     }}
                 >
                     <option value="Highest Rated">Highest Rated</option>
@@ -175,12 +178,12 @@ export const MainFeed: React.FC<MainFeedProps> = ({ view, isDarkMode, toggleThem
                 </select>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
                 {filteredRecipes.map(recipe => (
                     <RecipeCard
                         key={recipe.id}
                         recipe={recipe}
-                        variant="standard"
+                        variant="dashboard"
                         onClick={(id: string) => setSelectedRecipeId(id)}
                         onEdit={!isFeatureDisabled('editing') ? (recipe) => {
                             setRecipeToEdit(recipe);

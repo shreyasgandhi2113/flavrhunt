@@ -51,17 +51,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     }}
                     style={{
                         width: '100%',
-                        padding: '16px 16px 16px 48px',
-                        borderRadius: '99px',
-                        border: 'none',
-                        background: 'var(--search-bg, white)',
-                        color: 'var(--text-primary, inherit)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                        padding: '0 16px 0 48px',
+                        height: '48px',
+                        borderRadius: '24px',
+                        border: '1px solid var(--border-color)',
+                        background: 'var(--card-bg)',
+                        color: 'var(--text-primary)',
                         fontSize: '16px',
                         outline: 'none',
                         position: 'relative',
-                        zIndex: 1
+                        zIndex: 1,
+                        transition: 'all 0.2s ease',
                     }}
+                    className="search-input-fancy"
                 />
 
                 {showSuggestions && suggestons.length > 0 && (
@@ -107,17 +109,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                 <button
                     onClick={() => setActiveTag('All')}
                     style={{
-                        padding: '8px 16px',
-                        borderRadius: '99px',
+                        height: '32px',
+                        padding: '0 14px',
+                        borderRadius: '20px',
                         border: 'none',
-                        background: activeTag === 'All' ? '#111827' : 'rgba(255,255,255,0.6)',
-                        color: activeTag === 'All' ? 'white' : '#6b7280',
+                        background: activeTag === 'All' ? 'var(--primary-accent)' : '#F3F4F6',
+                        color: activeTag === 'All' ? 'white' : 'var(--text-secondary)',
                         cursor: 'pointer',
-                        fontWeight: 600,
+                        fontWeight: 500,
                         fontSize: '13px',
                         whiteSpace: 'nowrap',
-                        transition: 'all 0.2s'
+                        transition: 'all 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center'
                     }}
+                    className={activeTag !== 'All' ? 'filter-pill' : ''}
                 >
                     All
                 </button>
@@ -126,17 +132,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                         key={tag}
                         onClick={() => setActiveTag(tag)}
                         style={{
-                            padding: '8px 16px',
-                            borderRadius: '99px',
+                            height: '32px',
+                            padding: '0 14px',
+                            borderRadius: '20px',
                             border: 'none',
-                            background: activeTag === tag ? '#111827' : 'rgba(255,255,255,0.6)',
-                            color: activeTag === tag ? 'white' : '#6b7280',
+                            background: activeTag === tag ? 'var(--primary-accent)' : '#F3F4F6',
+                            color: activeTag === tag ? 'white' : 'var(--text-secondary)',
                             cursor: 'pointer',
-                            fontWeight: 600,
+                            fontWeight: 500,
                             fontSize: '13px',
                             whiteSpace: 'nowrap',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center'
                         }}
+                        className={activeTag !== tag ? 'filter-pill' : ''}
                     >
                         {tag}
                     </button>

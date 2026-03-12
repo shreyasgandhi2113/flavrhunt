@@ -18,17 +18,17 @@ export const RightSidebar: React.FC = () => {
                     <div className="user-avatar-lg">
                         {currentUser.fullName.charAt(0)}
                     </div>
-                    <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{currentUser.fullName}</h3>
-                    <p style={{ margin: 0, color: '#6b7280', fontSize: '14px' }}>@{currentUser.username}</p>
+                    <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 600 }}>{currentUser.fullName}</h3>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '14px' }}>@{currentUser.username}</p>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px', borderTop: '1px solid #f3f4f6', paddingTop: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '20px', borderTop: '1px solid var(--border-color)', paddingTop: '20px' }}>
                         <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontWeight: 'bold' }}>{currentUser.myRecipes.length}</div>
-                            <div style={{ fontSize: '12px', color: '#9ca3af' }}>Posts</div>
+                            <div style={{ fontWeight: '600', fontSize: '16px' }}>{currentUser.myRecipes.length}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Posts</div>
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontWeight: 'bold' }}>{currentUser.likedRecipes.length}</div>
-                            <div style={{ fontSize: '12px', color: '#9ca3af' }}>Likes</div>
+                            <div style={{ fontWeight: '600', fontSize: '16px' }}>{currentUser.likedRecipes.length}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Likes</div>
                         </div>
                     </div>
                 </div>

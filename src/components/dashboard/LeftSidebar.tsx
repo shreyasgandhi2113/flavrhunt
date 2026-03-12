@@ -31,8 +31,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeView, onViewChan
                         className={`nav-item ${activeView === item.id ? 'active' : ''}`}
                         onClick={() => onViewChange(item.id)}
                     >
-                        <span style={{ fontSize: '20px' }}>{item.icon}</span>
-                        <span>{item.label}</span>
+                        <span style={{ fontSize: '18px', display: 'flex' }}>{item.icon}</span>
+                        <span style={{ fontWeight: 500 }}>{item.label}</span>
                     </div>
                 ))}
             </nav>
