@@ -389,3 +389,49 @@ textarea.modal-input {
 .dashboard-layout.theme-dark .search-suggestion-item:hover {
     background: #374151 !important;
 }
+
+/* Dark mode: textarea + select same treatment as inputs */
+.dashboard-layout.theme-dark textarea {
+    color: white !important;
+    background: var(--card-bg) !important;
+}
+
+.dashboard-layout.theme-dark textarea::placeholder {
+    color: #9CA3AF !important;
+}
+
+.dashboard-layout.theme-dark select {
+    color: white !important;
+    background: var(--card-bg) !important;
+}
+
+/* Dark mode: developer names in ProjectInfoCard */
+.dashboard-layout.theme-dark .developer-name {
+    color: #E5E7EB;
+}
+
+/* Dark mode: settings modal labels and buttons */
+.dashboard-layout.theme-dark .modal-content label {
+    color: var(--text-primary);
+}
+
+.dashboard-layout.theme-dark .modal-content input {
+    background: #0F172A;
+    border-color: var(--border-color);
+}
+
+.dashboard-layout.theme-dark .modal-content select {
+    background: #0F172A !important;
+    border-color: var(--border-color);
+}
+
+/* Type Pill — match category tag buttons */
+.type-pill {
+    padding: 6px 12px;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}

@@ -415,13 +415,16 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                                             <div key={reply.replyId}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                                                     <div>
-                                                        <span style={{ fontWeight: 'bold', marginRight: '8px', fontSize: '14px', color: 'black' }}>@{reply.username}</span>
+                                                        <span style={{ fontWeight: 'bold', marginRight: '8px', fontSize: '14px', color: 'var(--text-primary)' }}>@{reply.username}</span>
                                                         <span style={{ fontSize: '12px', color: '#9ca3af' }}>
                                                             {new Date(reply.createdAt).toLocaleDateString()} {new Date(reply.createdAt).toLocaleTimeString()}
                                                         </span>
                                                     </div>
+                                                    {currentUser && currentUser.id !== reply.userId && (
+                                                        <button onClick={() => setReportTarget({ type: 'comment', id: reply.replyId, name: reply.text.substring(0, 20) })} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '14px' }}>🚩 Report</button>
+                                                    )}
                                                 </div>
-                                                <p style={{ margin: 0, fontSize: '14px', color: '#4b5563' }}>{reply.text}</p>
+                                                <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-secondary)' }}>{reply.text}</p>
                                             </div>
                                         ))}
                                     </div>

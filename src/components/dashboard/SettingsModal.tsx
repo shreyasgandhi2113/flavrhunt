@@ -48,7 +48,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                             name="fullName"
                             value={formData.fullName}
                             onChange={handleChange}
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '14px' }}
+                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-color, #e5e7eb)', fontSize: '14px', color: 'var(--text-primary, #111)', background: 'var(--bg-app, #fff)' }}
                             required
                         />
                     </div>
@@ -60,7 +60,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '14px' }}
+                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-color, #e5e7eb)', fontSize: '14px', color: 'var(--text-primary, #111)', background: 'var(--bg-app, #fff)' }}
                             required
                         />
                     </div>
@@ -72,7 +72,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '14px' }}
+                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-color, #e5e7eb)', fontSize: '14px', color: 'var(--text-primary, #111)', background: 'var(--bg-app, #fff)' }}
                             required
                         />
                     </div>
@@ -85,7 +85,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 name="age"
                                 value={formData.age}
                                 onChange={handleChange}
-                                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '14px' }}
+                                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-color, #e5e7eb)', fontSize: '14px', color: 'var(--text-primary, #111)', background: 'var(--bg-app, #fff)' }}
                                 required
                             />
                         </div>
@@ -95,7 +95,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 name="preference"
                                 value={formData.preference}
                                 onChange={handleChange}
-                                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '14px', background: 'white' }}
+                                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-color, #e5e7eb)', fontSize: '14px', color: 'var(--text-primary, #111)', background: 'var(--bg-app, #fff)' }}
                             >
                                 <option value="All">All</option>
                                 <option value="Veg">Veg</option>
@@ -108,7 +108,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         <button
                             type="button"
                             onClick={onClose}
-                            style={{ flex: 1, padding: '14px', borderRadius: '99px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer' }}
+                            style={{ flex: 1, padding: '14px', borderRadius: '99px', border: '1px solid var(--border-color, #e5e7eb)', background: 'var(--card-bg, white)', color: 'var(--text-primary, #111)', cursor: 'pointer' }}
                         >
                             Cancel
                         </button>
