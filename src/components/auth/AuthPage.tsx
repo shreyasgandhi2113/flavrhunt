@@ -99,7 +99,7 @@ export default function AuthPage() {
 
     const usernameError = (!formData.username) ? ''
         : (formData.username.length < 3) ? 'Minimum 3 characters'
-            : (/\s/.test(formData.username)) ? 'No spaces allowed'
+            : (mode !== 'admin' && /\s/.test(formData.username)) ? 'No spaces allowed'
                 : (mode === 'signup' && users.some(u => u.username.toLowerCase() === formData.username.toLowerCase())) ? 'Username already taken'
                     : '';
 
@@ -144,7 +144,7 @@ export default function AuthPage() {
 
             const user = users.find(u => u.username === formData.username);
 
-            if (!user) {
+            if (!user || user.password !== formData.password) {
                 setError('Invalid username or password.');
                 setIsShaking(true);
                 setTimeout(() => setIsShaking(false), 600);
@@ -264,7 +264,7 @@ export default function AuthPage() {
 
             {/* Right Panel - Form */}
             <div className={`auth-form-panel ${isShaking ? 'shake-animation' : ''}`}>
-                <div className="auth-form-container fade-in">
+                <div className="auth-form-container">
                     {maintenanceStatus === 'active' && (
                         <div className="auth-alert auth-alert-warning">
                             <strong>⚠️ FlavrHunt is currently under maintenance.</strong><br />
@@ -310,6 +310,7 @@ export default function AuthPage() {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 className={`form-input ${touchedFields.username ? (usernameError ? 'is-invalid' : 'is-valid') : ''}`}
+                                maxLength={22}
                                 required
                             />
                             {touchedFields.username && usernameError && <span className="error-text">{usernameError}</span>}

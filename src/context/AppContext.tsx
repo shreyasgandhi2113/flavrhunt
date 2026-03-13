@@ -346,9 +346,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     }, [maintenanceStatus, currentUser, maintenanceSettings.maintenanceType]);
 
-    const login = (username: string, _pass: string) => {
+    const login = (username: string, password: string) => {
         const user = users.find(u => u.username === username);
         if (user) {
+            if (user.password !== password) {
+                return false;
+            }
             if (user.status === 'disabled') {
                 alert("Your account is disabled. Please contact the owner of this project.");
                 return false;
