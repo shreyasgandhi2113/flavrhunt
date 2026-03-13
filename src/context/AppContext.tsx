@@ -33,7 +33,7 @@ interface AppContextType {
     adminLogin: (username: string, password: string) => boolean;
     signup: (user: Omit<User, 'id' | 'likedRecipes' | 'watchLaterRecipes' | 'myRecipes'> & { password: string }) => void;
     logout: () => void;
-    postRecipe: (recipe: Omit<Recipe, 'id' | 'hostId' | 'hostName' | 'rating' | 'reviews' | 'image'>) => void;
+    postRecipe: (recipe: Omit<Recipe, 'id' | 'hostId' | 'hostName' | 'rating' | 'reviews'>) => void;
     toggleLike: (recipeId: string) => void;
     toggleWatchLater: (recipeId: string) => void;
     getRecipeById: (id: string) => Recipe | undefined;
@@ -583,7 +583,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             hostName: currentUser.username,
             rating: 0,
             reviews: 0,
-            image: 'linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)',
+            image: recipeData.image || 'linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)',
             likedBy: [],
             ratings: {}
         };

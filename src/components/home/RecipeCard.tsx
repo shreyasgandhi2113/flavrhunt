@@ -137,9 +137,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
                         style={{
                             width: '100%',
                             height: '100%',
-                            background: isUrl ? `url("${recipe.image}")` : recipe.image,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
+                            background: isUrl ? 'var(--card-bg, #f3f4f6)' : recipe.image,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -148,12 +146,16 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
                             transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                         }}
                     >
-                        <div style={{ transition: 'transform 0.5s ease', opacity: isUrl && isHovered ? 0 : 1 }}>
-                            {!isUrl && (recipe.tags.includes('Vegan') ? '🥗' :
-                                recipe.tags.includes('Sweet') ? '🍓' :
-                                    recipe.tags.includes('Pasta') ? '🍝' :
-                                        recipe.tags.includes('Fish') ? '🐟' : '🥘')}
-                        </div>
+                        {isUrl ? (
+                            <img src={recipe.image} alt={recipe.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        ) : (
+                            <div style={{ transition: 'transform 0.5s ease', opacity: isUrl && isHovered ? 0 : 1 }}>
+                                {recipe.tags.includes('Vegan') ? '🥗' :
+                                    recipe.tags.includes('Sweet') ? '🍓' :
+                                        recipe.tags.includes('Pasta') ? '🍝' :
+                                            recipe.tags.includes('Fish') ? '🐟' : '🥘'}
+                            </div>
+                        )}
                     </div>
                     {/* Heart Burst Animation Overlay */}
                     {showHeart && (

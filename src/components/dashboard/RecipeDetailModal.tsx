@@ -45,6 +45,8 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
             stepsArray = splitByNum;
         }
     }
+    // Strip leading step prefixes like "Step 1:", "1.", "1)" to avoid double numbering
+    stepsArray = stepsArray.map(s => s.replace(/^(step\s*)?\d+[\s).:–-]*/i, '').trim()).filter(s => s.length > 0);
 
     // Comments State
     const [comments, setComments] = useState<Comment[]>([]);
@@ -210,13 +212,13 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                 </button>
 
                 <div style={{
-                    height: '200px',
-                    background: (recipe.image.startsWith('http') || recipe.image.startsWith('data:')) ? `url(${recipe.image})` : recipe.image,
-                    backgroundSize: (recipe.image.startsWith('http') || recipe.image.startsWith('data:')) ? 'cover' : undefined,
-                    backgroundPosition: 'center',
-                    borderRadius: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px'
+                    height: '240px',
+                    background: (recipe.image.startsWith('http') || recipe.image.startsWith('data:')) ? 'var(--card-bg, #f3f4f6)' : recipe.image,
+                    borderRadius: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', overflow: 'hidden'
                 }}>
-                    {(!recipe.image.startsWith('http') && !recipe.image.startsWith('data:')) && '🥘'}
+                    {(recipe.image.startsWith('http') || recipe.image.startsWith('data:')) ? (
+                        <img src={recipe.image} alt={recipe.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    ) : '🥘'}
                 </div>
 
                 <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>{recipe.title}</h1>
@@ -294,12 +296,12 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
 
                 <section style={{ marginBottom: '24px' }}>
                     <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>Description</h3>
-                    <p style={{ color: '#4b5563', lineHeight: 1.6 }}>{recipe.info}</p>
+                    <p style={{ color: 'var(--text-secondary, #4b5563)', lineHeight: 1.6 }}>{recipe.info}</p>
                 </section>
 
                 <section style={{ marginBottom: '24px' }}>
                     <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>Ingredients</h3>
-                    <ul style={{ listStyle: 'disc', paddingLeft: '20px', color: '#4b5563', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '8px' }}>
+                    <ul style={{ listStyle: 'disc', paddingLeft: '20px', color: 'var(--text-secondary, #4b5563)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '8px' }}>
                         {recipe.ingredients.map((ing, i) => (
                             <li key={i}>{ing}</li>
                         ))}
@@ -308,7 +310,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
 
                 <section style={{ marginBottom: '24px' }}>
                     <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>Process</h3>
-                    <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', color: '#4b5563', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                    <div style={{ background: 'var(--bg-app, #f9fafb)', padding: '16px', borderRadius: '12px', color: 'var(--text-secondary, #4b5563)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
                         {recipe.process}
                     </div>
                 </section>

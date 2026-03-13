@@ -23,6 +23,7 @@ export const PostRecipeModal: React.FC<PostRecipeModalProps> = ({ onClose, initi
         image: initialData?.image || ''
     });
 
+    const [isDragging, setIsDragging] = useState(false);
     const [selectedTags, setSelectedTags] = useState<Category[]>(initialData?.tags || []);
 
     const toggleTag = (tag: Category) => {
@@ -33,15 +34,39 @@ export const PostRecipeModal: React.FC<PostRecipeModalProps> = ({ onClose, initi
         }
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
+    const processFile = (file: File) => {
+        if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFormData(prev => ({ ...prev, image: reader.result as string }));
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) processFile(file);
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) processFile(file);
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -129,13 +154,19 @@ export const PostRecipeModal: React.FC<PostRecipeModalProps> = ({ onClose, initi
 
                                 <div style={{ flex: 1, minWidth: '200px' }}>
                                     <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-primary)' }}>Cover Image</label>
-                                    <label className="upload-card">
+                                    <label
+                                        className="upload-card"
+                                        onDrop={handleDrop}
+                                        onDragOver={handleDragOver}
+                                        onDragLeave={handleDragLeave}
+                                        style={isDragging ? { borderColor: 'var(--primary-accent)', background: 'var(--tag-bg)' } : undefined}
+                                    >
                                         {formData.image && formData.image.startsWith('data:') ? (
-                                            <img src={formData.image} alt="Preview" style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
+                                            <img src={formData.image} alt="Preview" style={{ width: '100%', height: '80px', objectFit: 'contain', borderRadius: '8px' }} />
                                         ) : (
                                             <>
-                                                <span style={{ fontSize: '24px', marginBottom: '8px' }}>📷</span>
-                                                <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Drag image here or click to upload</span>
+                                                <span style={{ fontSize: '24px', marginBottom: '8px' }}>{isDragging ? '📥' : '📷'}</span>
+                                                <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{isDragging ? 'Drop image here' : 'Drag image here or click to upload'}</span>
                                             </>
                                         )}
                                         <input
