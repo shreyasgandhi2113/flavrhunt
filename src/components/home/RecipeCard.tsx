@@ -147,7 +147,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, variant = 'stand
                         }}
                     >
                         {isUrl ? (
-                            <img src={recipe.image} alt={recipe.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            <img src={recipe.image} alt={recipe.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                             <div style={{ transition: 'transform 0.5s ease', opacity: isUrl && isHovered ? 0 : 1 }}>
                                 {recipe.tags.includes('Vegan') ? '🥗' :

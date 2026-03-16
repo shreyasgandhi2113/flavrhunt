@@ -217,7 +217,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, on
                     borderRadius: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', overflow: 'hidden'
                 }}>
                     {(recipe.image.startsWith('http') || recipe.image.startsWith('data:')) ? (
-                        <img src={recipe.image} alt={recipe.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        <img src={recipe.image} alt={recipe.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : '🥘'}
                 </div>
 
